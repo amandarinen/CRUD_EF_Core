@@ -74,7 +74,7 @@ using (var db = new ShopContext())
     {
         while (true)
         {
-            Console.WriteLine("\nCommands: listcustomers | addcustomer | editcustomer <id> | deletecustomer <id> | exit");
+            Console.WriteLine("\nCommands: 1.listcustomers | 2.addcustomer | 3.editcustomer <id> | 4.deletecustomer <id> | exit");
             Console.WriteLine("> ");
             var line = Console.ReadLine()?.Trim() ?? string.Empty;
  
@@ -93,18 +93,28 @@ using (var db = new ShopContext())
 
             switch (cmd)
             {
-                case "listcustomers":
+                case "1":
                     await CustomerServices.ListCustomerAsync();
                     break;
-                //case "addcustomer":
-                    //await AddCustomerAsync();
-                    //break;
-                //case "editcustomer":
-                    //await EditCustomerAsync();
-                    //break;
-                //case "deletecustomer":
-                    //await DeleteCustomerAsync();
-                    //break;
+                case "2":
+                    await CustomerServices.AddCustomerAsync();
+                    break;
+                case "3":
+                    if (parts.Length < 2 || !int.TryParse(parts[1], out var id))
+                    {
+                        Console.WriteLine("Usage: 3 (Edit) <id>");
+                        break;
+                    }
+                    await CustomerServices.EditCustomerAsync(id);
+                    break;
+                case "4":
+                    if (parts.Length < 2 || !int.TryParse(parts[1], out var idD))
+                    {
+                        Console.WriteLine("Usage: 4 (Delete) <id>");
+                        break;
+                    }
+                    await CustomerServices.DeleteCustomerAsync(idD);
+                    break;
                 default:
                     Console.WriteLine("unknown command");
                     break;
