@@ -105,5 +105,26 @@ namespace CRUD_EF_Core.Services
                 Console.WriteLine(exception.Message);
             }
         }
+
+        public static async Task DeleteCustomerAsync(int id)
+        {
+            using var db = new ShopContext();
+            var customer = await db.Customers.FirstOrDefaultAsync(customer => customer.CustomerId == id);
+            if (customer == null)
+            {
+                Console.WriteLine("Customer not found!");
+                return;
+            }
+            db.Customers.Remove(customer);
+            try
+            {
+                await db.SaveChangesAsync();
+                Console.WriteLine("Customer deleted!");
+            }
+            catch (DbUpdateException exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
+        }
     }
 }

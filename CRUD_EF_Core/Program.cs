@@ -107,9 +107,14 @@ using (var db = new ShopContext())
                     }
                     await CustomerServices.EditCustomerAsync(id);
                     break;
-                //case "4":
-                    //await DeleteCustomerAsync();
-                    //break;
+                case "4":
+                    if (parts.Length < 2 || !int.TryParse(parts[1], out var idD))
+                    {
+                        Console.WriteLine("Usage: 4 (Delete) <id>");
+                        break;
+                    }
+                    await CustomerServices.DeleteCustomerAsync(idD);
+                    break;
                 default:
                     Console.WriteLine("unknown command");
                     break;
