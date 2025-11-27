@@ -172,7 +172,11 @@ using (var db = new ShopContext())
             switch (cmd)
             {
                 case "1":
-                    await OrderServices.ListOrderAsync();
+                    Console.WriteLine("Please enter page: ");
+                    var page = int.Parse(Console.ReadLine());
+                    Console.WriteLine("Please enter page size: ");
+                    var pageSize = int.Parse(Console.ReadLine());
+                    await OrderServices.ListOrderAsync(page, pageSize);
                     break;
                 case "2":
                     if (parts.Length < 2 || !int.TryParse(parts[1], out var orderId))

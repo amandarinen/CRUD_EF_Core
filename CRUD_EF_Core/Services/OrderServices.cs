@@ -1,25 +1,33 @@
-﻿using Microsoft.EntityFrameworkCore;
-using CRUD_EF_Core.Models;
+﻿using CRUD_EF_Core.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CRUD_EF_Core.Services
 {
     public class OrderServices
     {
-        public static async Task ListOrderAsync()
+        public static async Task ListOrderAsync(int page, int pageSize)
         {
             var db = new ShopContext();
-            var rows = await db.Orders
+            var query = db.Orders
                 .AsNoTracking()
                 .Include(customer => customer.Customer)
-                .Include(orderrow=>orderrow.OrderRows)
-                .OrderBy(order => order.OrderId)
-                .ToListAsync();
+                .Include(orderrow => orderrow.OrderRows)
+                .OrderBy(order => order.OrderId);
             Console.WriteLine("Order Id | Order Date | Status | Customer Name | Total Amount ");
+
+            var rows = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            Console.WriteLine($"Page {page}/{totalPages}, pageSize={pageSize}");
+
             foreach (var row in rows)
             {
                 Console.WriteLine($"{row.OrderId} | {row.OrderDate} | {row.Status} | {row.Customer?.Name} | {row.TotalAmount}");
