@@ -2,6 +2,13 @@
 
 namespace CRUD_EF_Core.Models
 {
+    public enum Status
+    {
+        Processing,
+        Completed,
+        Canceled
+    }
+
     public class Order
     {
         public int OrderId { get; set; }
@@ -9,10 +16,10 @@ namespace CRUD_EF_Core.Models
         public DateTime OrderDate { get; set; }
 
         [Required, MaxLength(100)]
-        public string Status { get; set; } = null!;
+        public Status Status { get; set; }
 
         [Required]
-        public decimal TotalAmount { get; set; }
+        public decimal TotalAmount => OrderRows.Sum(amount => amount.UnitPrice* amount.Quantity);
         public Customer? Customer { get; set; }
         public List<OrderRow> OrderRows { get; set; } = new();
     }

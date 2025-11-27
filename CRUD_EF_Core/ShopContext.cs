@@ -41,8 +41,6 @@ namespace CRUD_EF_Core
 
                 e.Property(order => order.Status).HasMaxLength(50).IsRequired();
 
-                e.Property(order => order.TotalAmount).IsRequired();
-
                 e.HasOne(order => order.Customer)
                 .WithMany(customer => customer.Orders)
                 .HasForeignKey(order => order.CustomerId)
