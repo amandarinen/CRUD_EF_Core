@@ -26,11 +26,13 @@ namespace CRUD_EF_Core.Services
             var totalCount = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
-            Console.WriteLine($"Page {page}/{totalPages}, pageSize={pageSize}");
+            Console.WriteLine($"Page = {page}/{totalPages}, pageSize = {pageSize}");
 
             foreach (var row in rows)
             {
-                Console.WriteLine($"{row.OrderId} | {row.OrderDate} | {row.Status} | {row.Customer?.Name} | {row.TotalAmount}");
+                var totalAmount = row.OrderRows.Sum(or => or.UnitPrice * or.Quantity);
+
+                Console.WriteLine($"{row.OrderId} | {row.OrderDate} | {row.Status} | {row.Customer?.Name} | {totalAmount}");
             }
         }
 
@@ -44,12 +46,20 @@ namespace CRUD_EF_Core.Services
                 .ThenInclude(order => order.Product)
                 .FirstOrDefaultAsync(order => order.OrderId == orderId);
 
+            if (order == null)
+            {
+                Console.WriteLine("Order not found.");
+                return;
+            }
+
             Console.WriteLine("Product Name | Quantity | Price per unit | OrderRowAmount");
             foreach (var row in order.OrderRows)
             {
                 Console.WriteLine($"{row.Product?.ProductName} | {row.Quantity} | {row.UnitPrice} | {row.Quantity * row.UnitPrice}");
             }
-            Console.WriteLine($"Total Amount: {order.TotalAmount}");
+            var totalAmount = order.OrderRows.Sum(or => or.UnitPrice * or.Quantity);
+
+            Console.WriteLine($"Total Amount: {totalAmount}");
         }
 
         public static async Task AddOrderAsync()
@@ -75,7 +85,8 @@ namespace CRUD_EF_Core.Services
             {
                 CustomerId = customerId,
                 OrderDate = DateTime.Now,
-                Status = Status.Processing
+                Status = Status.Processing,
+                TotalAmount = 0
             };
 
             while (true)
@@ -122,9 +133,10 @@ namespace CRUD_EF_Core.Services
                 };
 
                 newOrder.OrderRows.Add(orderRow);
+                newOrder.TotalAmount = newOrder.OrderRows.Sum(amount => amount.UnitPrice * amount.Quantity);
 
                 Console.WriteLine("\nDone with order? 'yes' or 'no'.");
-                var line = Console.ReadLine()?.Trim() ?? string.Empty;
+                var line = Console.ReadLine()?.Trim().ToLowerInvariant() ?? string.Empty;
 
                 if (string.IsNullOrEmpty(line))
                 {
@@ -161,7 +173,9 @@ namespace CRUD_EF_Core.Services
             Console.WriteLine("Order Id | Order Date | Status | Customer Name | Total Amount ");
             foreach (var row in rows)
             {
-                Console.WriteLine($"{row.OrderId} | {row.OrderDate} | {row.Status} | {row.Customer?.Name} | {row.TotalAmount}");
+                var totalAmount = row.OrderRows.Sum(or => or.UnitPrice * or.Quantity);
+
+                Console.WriteLine($"{row.OrderId} | {row.OrderDate} | {row.Status} | {row.Customer?.Name} | {totalAmount}");
             }
         }
 
@@ -178,7 +192,9 @@ namespace CRUD_EF_Core.Services
             Console.WriteLine("Order Id | Order Date | Status | Customer Name | Total Amount ");
             foreach (var row in rows)
             {
-                Console.WriteLine($"{row.OrderId} | {row.OrderDate} | {row.Status} | {row.Customer?.Name} | {row.TotalAmount}");
+                var totalAmount = row.OrderRows.Sum(or => or.UnitPrice * or.Quantity);
+
+                Console.WriteLine($"{row.OrderId} | {row.OrderDate} | {row.Status} | {row.Customer?.Name} | {totalAmount}");
             }
         }
     }

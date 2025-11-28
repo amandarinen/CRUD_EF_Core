@@ -19,7 +19,7 @@ namespace CRUD_EF_Core.Models
         public Status Status { get; set; }
 
         [Required]
-        public decimal TotalAmount => OrderRows.Sum(amount => amount.UnitPrice* amount.Quantity);
+        public decimal TotalAmount {get; set; }
         public Customer? Customer { get; set; }
         public List<OrderRow> OrderRows { get; set; } = new();
     }

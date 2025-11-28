@@ -16,7 +16,11 @@ namespace CRUD_EF_Core.Services
         public static async Task ListCustomerAsync()
         {
             var db = new ShopContext();
-            var rows = await db.Customers.AsNoTracking().OrderBy(customer => customer.CustomerId).ToListAsync();
+            var rows = await db.Customers
+                .AsNoTracking()
+                .OrderBy(customer => customer.CustomerId)
+                .ToListAsync();
+
             Console.WriteLine("Customer Id | Customer Name | Email | City ");
             foreach (var row in rows)
             {
