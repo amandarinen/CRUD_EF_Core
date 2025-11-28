@@ -15,5 +15,6 @@ namespace CRUD_EF_Core.Models
         [MaxLength(250)]
         public string? ProductDescription { get; set; }
 
+        // public List<OrderRows> OrderRows {get; set;} = new();
     }
 }

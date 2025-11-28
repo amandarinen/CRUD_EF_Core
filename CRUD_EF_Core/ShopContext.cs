@@ -6,6 +6,7 @@ namespace CRUD_EF_Core
 {
     public class ShopContext : DbContext
     {
+        //Mappar datan mot tabellerna i databasen
         public DbSet<Customer> Customers => Set<Customer>();
         public DbSet<Order> Orders => Set<Order>();
         public DbSet<OrderRow> OrderRows => Set<OrderRow>();
@@ -44,7 +45,7 @@ namespace CRUD_EF_Core
                 e.HasOne(order => order.Customer)
                 .WithMany(customer => customer.Orders)
                 .HasForeignKey(order => order.CustomerId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<OrderRow>(e =>
@@ -58,7 +59,7 @@ namespace CRUD_EF_Core
                 e.HasOne(orderrow => orderrow.Order)
                 .WithMany(orderrow => orderrow.OrderRows)
                 .HasForeignKey(orderrow => orderrow.OrderId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
                 e.HasOne(orderrow => orderrow.Product)
                 .WithMany()
