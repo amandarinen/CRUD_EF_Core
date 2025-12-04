@@ -4,6 +4,7 @@ namespace CRUD_EF_Core.Models
 {
     public class Product
     {
+        //PK
         public int ProductId { get; set; }
 
         [Required]
@@ -15,6 +16,9 @@ namespace CRUD_EF_Core.Models
         [MaxLength(250)]
         public string? ProductDescription { get; set; }
 
-        // public List<OrderRows> OrderRows {get; set;} = new();
+        //FK
+        public int? CategoryId { get; set; }
+
+        public Category? Category { get; set; }
     }
 }

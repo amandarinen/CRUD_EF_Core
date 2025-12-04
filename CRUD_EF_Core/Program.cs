@@ -11,8 +11,8 @@ Console.WriteLine("DB: " + Path.Combine(AppContext.BaseDirectory, "shop.db"));
 await DbSeeder.SeedAsync();   
 
 while (true)
-    {
-     Console.WriteLine("\nCommands: customers | products | orders | sortorders | exit");
+{
+     Console.WriteLine("\nMain Menu: 1.customers | 2.products | 3.categories | 4.orders | 5.sortorders | exit");
      Console.WriteLine("> ");
      var line = Console.ReadLine()?.Trim() ?? string.Empty;
 
@@ -26,33 +26,148 @@ while (true)
             break;
         }
 
-        var cmd = line.ToLowerInvariant();
+        var mainMenu = line.ToLowerInvariant();
 
-        switch (cmd)
+        switch (mainMenu)
         {
-            case "customers":
+            case "1":
                 await CustomerMenuAsync();
                 break;
-            //case "products":
-            //await ProductMenuAsync();
-            //break;
-            case "orders":
+            case "2":
+                await ProductMenuAsync();
+                break;
+            case "3":
+                await CategoryMenuAsync();
+                break;
+            case "4":
                 await OrderMenuAsync();
                 break;
-            case "sortorders":
+            case "5":
                 await SortOrderMenuAsync();
                 break;
             default:
                 Console.WriteLine("unknown command");
                 break;
         }
-    }
+}
 
-    static async Task CustomerMenuAsync()
+static async Task CustomerMenuAsync()
+{
+    while (true)
+    {
+        Console.WriteLine("\nCustomer Menu: 1.list customers | 2.add customer | 3.edit customer <id> | 4.delete customer <id> | exit");
+        Console.WriteLine("> ");
+        var line = Console.ReadLine()?.Trim() ?? string.Empty;
+
+        if (string.IsNullOrEmpty(line))
+        {
+            continue;
+        }
+
+        if (line.Equals("exit", StringComparison.OrdinalIgnoreCase))
+        {
+            break;
+        }
+
+        var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var customerMenu = parts[0].ToLowerInvariant();
+
+        switch (customerMenu)
+        {
+            case "1":
+                await CustomerServices.ListCustomerAsync();
+                break;
+            case "2":
+                await CustomerServices.AddCustomerAsync();
+                break;
+            case "3":
+                if (parts.Length < 2 || !int.TryParse(parts[1], out var id))
+                {
+                    Console.WriteLine("Usage: 3 (Edit) <id>");
+                    break;
+                }
+                await CustomerServices.EditCustomerAsync(id);
+                break;
+            case "4":
+                if (parts.Length < 2 || !int.TryParse(parts[1], out var idD))
+                {
+                    Console.WriteLine("Usage: 4 (Delete) <id>");
+                    break;
+                }
+                await CustomerServices.DeleteCustomerAsync(idD);
+                break;
+            default:
+                Console.WriteLine("unknown command");
+                break;
+        }
+    }
+}
+
+static async Task ProductMenuAsync()
+{
+    while (true)
+    {
+        Console.WriteLine("\nProduct Menu: 1.list products | 2.list products by category <id> | 3.add product | 4.delete product <id> | 5.edit product <id> | exit");
+        Console.WriteLine("> ");
+        var line = Console.ReadLine()?.Trim() ?? string.Empty;
+
+        if (string.IsNullOrEmpty(line))
+        {
+            continue;
+        }
+
+        if (line.Equals("exit", StringComparison.OrdinalIgnoreCase))
+        {
+            break;
+        }
+
+        var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var productMenu = parts[0].ToLowerInvariant();
+
+        switch (productMenu)
+        {
+            case "1":
+                await ProductServices.ListProductAsync();
+                break;
+            //case "categoryproduct":
+            //if (parts.Length < 2 || !int.TryParse(parts[1], out var idCategory))
+            //{
+            // Console.WriteLine("Usage: CategoryProduct <id>");
+            // break;
+            //}
+            //await ListProductsByCategoryAsync(idCategory);
+            //break;
+            case "3":
+                await ProductServices.AddProductAsync();
+                break;
+            case "4":
+                if (parts.Length < 2 || !int.TryParse(parts[1], out var id))
+                {
+                    Console.WriteLine("Usage: (4) Edit product <id>");
+                    break;
+                }
+                await ProductServices.EditProductAsync(id);
+                break;
+            case "5":
+                if (parts.Length < 2 || !int.TryParse(parts[1], out var idD))
+                {
+                    Console.WriteLine("Usage: (5) Delete product <id>");
+                    break;
+                }
+                await ProductServices.DeleteProductAsync(idD);
+                break;
+            default:
+                Console.WriteLine("unknown command");
+                break;
+        }
+    }
+}
+
+    static async Task CategoryMenuAsync()
     {
         while (true)
         {
-            Console.WriteLine("\nCommands: 1.list customers | 2.add customer | 3.edit customer <id> | 4.delete customer <id> | exit");
+            Console.WriteLine("\nCategory Menu: 1.list category | 2.add category | 3.edit category <id> | 4.delete category <id> | exit");
             Console.WriteLine("> ");
             var line = Console.ReadLine()?.Trim() ?? string.Empty;
 
@@ -63,35 +178,35 @@ while (true)
 
             if (line.Equals("exit", StringComparison.OrdinalIgnoreCase))
             {
-                break;
+                break; 
             }
 
             var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            var cmd = parts[0].ToLowerInvariant();
+            var categoryMenu = parts[0].ToLowerInvariant();
 
-            switch (cmd)
+            switch (categoryMenu)
             {
                 case "1":
-                    await CustomerServices.ListCustomerAsync();
+                    await CategoryServices.ListCategoryAsync(); 
                     break;
                 case "2":
-                    await CustomerServices.AddCustomerAsync();
+                    await CategoryServices.AddCategoryAsync();
                     break;
                 case "3":
                     if (parts.Length < 2 || !int.TryParse(parts[1], out var id))
                     {
-                        Console.WriteLine("Usage: 3 (Edit) <id>");
+                        Console.WriteLine("Usage: Edit category <id>");
                         break;
                     }
-                    await CustomerServices.EditCustomerAsync(id);
+                    await CategoryServices.EditCategoryAsync(id);
                     break;
                 case "4":
                     if (parts.Length < 2 || !int.TryParse(parts[1], out var idD))
                     {
-                        Console.WriteLine("Usage: 4 (Delete) <id>");
+                        Console.WriteLine("Usage: Delete category <id>");
                         break;
                     }
-                    await CustomerServices.DeleteCustomerAsync(idD);
+                    await CategoryServices.DeleteCategoryAsync(idD);
                     break;
                 default:
                     Console.WriteLine("unknown command");
@@ -104,7 +219,7 @@ while (true)
     {
         while (true)
         {
-            Console.WriteLine("\nCommands: 1.list orders | 2.order details <id> | 3.add order | exit");
+            Console.WriteLine("\nOrder Menu: 1.list orders | 2.order details <id> | 3.add order | 4.order summary | exit");
             Console.WriteLine("> ");
             var line = Console.ReadLine()?.Trim() ?? string.Empty;
 
@@ -119,9 +234,9 @@ while (true)
             }
 
             var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            var cmd = parts[0].ToLowerInvariant();
+            var orderMenu = parts[0].ToLowerInvariant();
 
-            switch (cmd)
+            switch (orderMenu)
             {
                 case "1":
                     Console.WriteLine("Please enter page: ");
@@ -141,6 +256,9 @@ while (true)
                 case "3":
                     await OrderServices.AddOrderAsync();
                     break;
+                case "4":
+                    await OrderServices.ListOrderSummary();
+                    break;
                 default:
                     Console.WriteLine("unknown command");
                     break;
@@ -152,7 +270,7 @@ while (true)
     {
         while (true)
         {
-            Console.WriteLine("\nCommands: 1. sort order by customer id <id> | 2. sort order by status <Completed/Processing/Canceled> | exit");
+            Console.WriteLine("\nSort Order Menu: 1. sort order by customer id <id> | 2. sort order by status <Completed/Processing/Canceled> | exit");
             Console.WriteLine("> ");
             var line = Console.ReadLine()?.Trim() ?? string.Empty;
 
@@ -167,9 +285,9 @@ while (true)
             }
 
             var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            var cmd = parts[0].ToLowerInvariant();
+            var sortOrderMenu = parts[0].ToLowerInvariant();
 
-            switch (cmd)
+            switch (sortOrderMenu)
             {
                 case "1":
                     if (parts.Length < 2 || !int.TryParse(parts[1], out var customerId))
@@ -193,3 +311,4 @@ while (true)
             }
         }
     }
+
