@@ -139,5 +139,19 @@ namespace CRUD_EF_Core.Services
                 Console.WriteLine("DB Error!" + exception.GetBaseException().Message);
             }
         }
+
+        public static async Task ProductSalesAsync()
+
+        {
+            using var db = new ShopContext();
+            var products = await db.ProductSalesViews
+                .OrderByDescending(p => p.ProductId)
+                .ToListAsync();
+
+            foreach(var product in products)
+            {
+                Console.WriteLine($"ProductId: {product.ProductId} | Total Quantity Sold: {product.TotalQuantitySold}");
+            }
+        }
     }
 }

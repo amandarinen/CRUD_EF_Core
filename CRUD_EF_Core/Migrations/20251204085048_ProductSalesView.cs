@@ -5,21 +5,20 @@
 namespace CRUD_EF_Core.Migrations
 {
     /// <inheritdoc />
-    public partial class CustomerOrderCountView : Migration
+    public partial class ProductSalesView : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(@"
-            CREATE VIEW IF NOT EXISTS CostumerOrderCountView AS
+            CREATE VIEW IF NOT EXISTS ProductSalesView AS
             SELECT
-                c.CustomerId,
-                c.Name,
-                c.Email,
-                IFNULL(Count(o.OrderId), 0) AS NumberOfOrders
-            FROM Customers c
-            LEFT JOIN Orders o ON o.CustomerId = o.CustomerId
-            GROUP BY c.CustomerId, c.Name, c.Email;
+                p.ProductId,
+                p.ProductName,
+                IFNULL(SUM(orw.Quantity), 0) AS TotalQuantitySold
+            FROM Products p
+            LEFT JOIN OrderRows orw ON orw.ProductId = p.ProductId
+            GROUP BY p.ProductId, p.ProductName;
             ");
         }
 
@@ -27,8 +26,7 @@ namespace CRUD_EF_Core.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(@"
-            DROP VIEW IF EXISTS CostumerOrderCountView
-            ");
+            DROP VIEW IF EXISTS ProductSalesView");
         }
     }
 }

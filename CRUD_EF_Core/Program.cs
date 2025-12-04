@@ -12,7 +12,7 @@ await DbSeeder.SeedAsync();
 
 while (true)
 {
-     Console.WriteLine("\nMain Menu: 1.customers | 2.products | 3.categories | 4.orders | 5.sortorders | exit");
+     Console.WriteLine("\nMain Menu: \n| 1.customers | \n| 2.products | \n| 3.categories | \n| 4.orders | \n| 5.sortorders | \n| exit");
      Console.WriteLine("> ");
      var line = Console.ReadLine()?.Trim() ?? string.Empty;
 
@@ -55,7 +55,7 @@ static async Task CustomerMenuAsync()
 {
     while (true)
     {
-        Console.WriteLine("\nCustomer Menu: 1.list customers | 2.add customer | 3.edit customer <id> | 4.delete customer <id> | exit");
+        Console.WriteLine("\nCustomer Menu: \n| 1.list customers | \n| 2.add customer | \n| 3.edit customer <id> | \n| 4.delete customer <id> | \n| 5.Number of Orders | \n| exit");
         Console.WriteLine("> ");
         var line = Console.ReadLine()?.Trim() ?? string.Empty;
 
@@ -96,6 +96,9 @@ static async Task CustomerMenuAsync()
                 }
                 await CustomerServices.DeleteCustomerAsync(idD);
                 break;
+            case "5":
+                await CustomerServices.NumberOfOrdersAsync();
+                break;
             default:
                 Console.WriteLine("unknown command");
                 break;
@@ -107,7 +110,7 @@ static async Task ProductMenuAsync()
 {
     while (true)
     {
-        Console.WriteLine("\nProduct Menu: 1.list products | 2.list products by category <id> | 3.add product | 4.delete product <id> | 5.edit product <id> | exit");
+        Console.WriteLine("\nProduct Menu: \n| 1.list products | \n| 2.list products by category <id> | \n| 3.add product | \n| 4.delete product <id> | \n| 5.edit product <id> | \n| 6.quantity sold | \n| exit");
         Console.WriteLine("> ");
         var line = Console.ReadLine()?.Trim() ?? string.Empty;
 
@@ -156,6 +159,9 @@ static async Task ProductMenuAsync()
                 }
                 await ProductServices.DeleteProductAsync(idD);
                 break;
+            case "6":
+                await ProductServices.ProductSalesAsync();
+                break;
             default:
                 Console.WriteLine("unknown command");
                 break;
@@ -167,7 +173,7 @@ static async Task ProductMenuAsync()
     {
         while (true)
         {
-            Console.WriteLine("\nCategory Menu: 1.list category | 2.add category | 3.edit category <id> | 4.delete category <id> | exit");
+            Console.WriteLine("\nCategory Menu: \n| 1.list category | \n| 2.add category | \n| 3.edit category <id> | \n| 4.delete category <id> | \n| exit");
             Console.WriteLine("> ");
             var line = Console.ReadLine()?.Trim() ?? string.Empty;
 
@@ -219,7 +225,7 @@ static async Task ProductMenuAsync()
     {
         while (true)
         {
-            Console.WriteLine("\nOrder Menu: 1.list orders | 2.order details <id> | 3.add order | 4.order summary | exit");
+            Console.WriteLine("\nOrder Menu: \n| 1.list orders | \n| 2.order details <id> | \n| 3.add order | \n| 4.order summary | \n| exit");
             Console.WriteLine("> ");
             var line = Console.ReadLine()?.Trim() ?? string.Empty;
 
@@ -270,7 +276,7 @@ static async Task ProductMenuAsync()
     {
         while (true)
         {
-            Console.WriteLine("\nSort Order Menu: 1. sort order by customer id <id> | 2. sort order by status <Completed/Processing/Canceled> | exit");
+            Console.WriteLine("\nSort Order Menu: \n| 1. sort order by customer id <id> | \n| 2. sort order by status <Completed/Processing/Canceled> | \n| exit");
             Console.WriteLine("> ");
             var line = Console.ReadLine()?.Trim() ?? string.Empty;
 
