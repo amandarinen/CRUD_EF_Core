@@ -11,6 +11,10 @@ namespace CRUD_EF_Core
         public DbSet<Order> Orders => Set<Order>();
         public DbSet<OrderRow> OrderRows => Set<OrderRow>();
         public DbSet<Product> Products => Set<Product>();
+        public DbSet<Category> Categories => Set<Category>();
+        public DbSet<OrderSummary> OrderSummaries => Set<OrderSummary>();
+        public DbSet<CostumerOrderCountView> CustomerOrderCountViews => Set<CostumerOrderCountView>();
+        public DbSet<ProductSalesView> ProductSalesViews => Set<ProductSalesView>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -76,6 +80,39 @@ namespace CRUD_EF_Core
                 e.Property(product => product.ProductName).IsRequired().HasMaxLength(100);
 
                 e.Property(product => product.ProductDescription).HasMaxLength(250);
+            });
+
+            modelBuilder.Entity<Category>(e =>
+            {
+                e.HasKey(category => category.CategoryId);
+
+                e.Property(category => category.CategoryName)
+                .IsRequired().HasMaxLength(100);
+
+                e.Property(category => category.CategoryDescription).HasMaxLength(250);
+
+                e.HasIndex(category => category.CategoryName).IsUnique();
+            });
+
+            modelBuilder.Entity<OrderSummary>(e =>
+            {
+                e.HasNoKey(); // saknar PK
+
+                e.ToView("OrderSummary"); //kopplar tabellen mot SQLite, behöver inte ha matchande modellnamn bara samma som våran tabel
+            });
+
+            modelBuilder.Entity<CostumerOrderCountView>(e =>
+            {
+                e.HasNoKey();
+
+                e.ToView("CostumerOrderCountView");
+            });
+
+            modelBuilder.Entity<ProductSalesView>(e =>
+            {
+                e.HasNoKey();
+
+                e.ToView("ProductSalesView");
             });
         }
     }

@@ -130,5 +130,18 @@ namespace CRUD_EF_Core.Services
                 Console.WriteLine(exception.Message);
             }
         }
+
+        public static async Task NumberOfOrdersAsync()
+        {
+            using var db = new ShopContext();
+            var orders = await db.CustomerOrderCountViews
+                .OrderByDescending(c => c.CustomerId)
+                .ToListAsync();
+
+            foreach (var order in orders)
+            {
+                Console.WriteLine($"CustomerId: {order.CustomerId} | NumberOfOrders: {order.NumberOfOrders}");
+            }
+        }
     }
 }

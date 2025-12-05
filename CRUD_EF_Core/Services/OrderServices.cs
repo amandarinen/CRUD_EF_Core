@@ -30,9 +30,9 @@ namespace CRUD_EF_Core.Services
 
             foreach (var row in rows)
             {
-                var totalAmount = row.OrderRows.Sum(or => or.UnitPrice * or.Quantity);
+                //var totalAmount = row.OrderRows.Sum(or => or.UnitPrice * or.Quantity);
 
-                Console.WriteLine($"{row.OrderId} | {row.OrderDate} | {row.Status} | {row.Customer?.Name} | {totalAmount}");
+                Console.WriteLine($"{row.OrderId} | {row.OrderDate} | {row.Status} | {row.Customer?.Name} | {row.TotalAmount}");
             }
         }
 
@@ -133,7 +133,7 @@ namespace CRUD_EF_Core.Services
                 };
 
                 newOrder.OrderRows.Add(orderRow);
-                newOrder.TotalAmount = newOrder.OrderRows.Sum(amount => amount.UnitPrice * amount.Quantity);
+                //newOrder.TotalAmount = newOrder.OrderRows.Sum(amount => amount.UnitPrice * amount.Quantity);
 
                 Console.WriteLine("\nDone with order? 'yes' or 'no'.");
                 var line = Console.ReadLine()?.Trim().ToLowerInvariant() ?? string.Empty;
@@ -173,16 +173,16 @@ namespace CRUD_EF_Core.Services
             Console.WriteLine("Order Id | Order Date | Status | Customer Name | Total Amount ");
             foreach (var row in rows)
             {
-                var totalAmount = row.OrderRows.Sum(or => or.UnitPrice * or.Quantity);
+                //var totalAmount = row.OrderRows.Sum(or => or.UnitPrice * or.Quantity);
 
-                Console.WriteLine($"{row.OrderId} | {row.OrderDate} | {row.Status} | {row.Customer?.Name} | {totalAmount}");
+                Console.WriteLine($"{row.OrderId} | {row.OrderDate} | {row.Status} | {row.Customer?.Name} | {row.TotalAmount}");
             }
         }
 
         public static async Task SortOrderStatusAsync(Status status)
         {
             var db = new ShopContext();
-            var rows = await db.Orders
+            var orders = await db.Orders
                 .AsNoTracking()
                 .Include(customer => customer.Customer)
                 .Include(orderrow => orderrow.OrderRows)
@@ -190,11 +190,26 @@ namespace CRUD_EF_Core.Services
                 .OrderBy(order => order.OrderId)
                 .ToListAsync();
             Console.WriteLine("Order Id | Order Date | Status | Customer Name | Total Amount ");
-            foreach (var row in rows)
+            foreach (var order in orders)
             {
-                var totalAmount = row.OrderRows.Sum(or => or.UnitPrice * or.Quantity);
+                //var totalAmount = order.OrderRows.Sum(or => or.UnitPrice * or.Quantity);
 
-                Console.WriteLine($"{row.OrderId} | {row.OrderDate} | {row.Status} | {row.Customer?.Name} | {totalAmount}");
+                Console.WriteLine($"{order.OrderId} | {order.OrderDate} | {order.Status} | {order.Customer?.Name} | {order.TotalAmount}");
+            }
+        }
+
+        public static async Task ListOrderSummary()
+        {
+            using var db = new ShopContext();
+
+            var summaries = await db.OrderSummaries
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+            Console.WriteLine("Order Id | Order Date | Total Amount | Customer Name | Customer Email");
+
+            foreach(var summary in summaries)
+            {
+                Console.WriteLine($"{summary.OrderId} | {summary.OrderDate} | {summary.TotalAmount} | {summary.CustomerName} | {summary.CustomerEmail}");
             }
         }
     }
