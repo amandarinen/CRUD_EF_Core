@@ -58,7 +58,8 @@ namespace CRUD_EF_Core.Migrations
                         name: "FK_Products_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
-                        principalColumn: "CategoryId");
+                        principalColumn: "CategoryId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(

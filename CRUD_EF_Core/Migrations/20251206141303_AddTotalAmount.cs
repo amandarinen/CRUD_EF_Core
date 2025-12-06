@@ -51,9 +51,9 @@ namespace CRUD_EF_Core.Migrations
                 SET TotalAmount = (
                                     SELECT IFNULL(SUM(Quantity * UnitPrice), 0) 
                                     FROM OrderRows 
-                                    WHERE OrderId = NEW.OrderId
+                                    WHERE OrderId = OLD.OrderId
                                 )
-                                WHERE OrderId = NEW.OrderId;
+                                WHERE OrderId = OLD.OrderId;
                 END;
 
             ");
@@ -64,15 +64,15 @@ namespace CRUD_EF_Core.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(@"
-            DROP TRIGGER IF EXISTS trg_OrderRows_Insert
+            DROP TRIGGER IF EXISTS trg_OrderRow_Insert
             ");
 
             migrationBuilder.Sql(@"
-            DROP TRIGGER IF EXISTS trg_OrderRows_Update
+            DROP TRIGGER IF EXISTS trg_OrderRow_Update
             ");
 
             migrationBuilder.Sql(@"
-            DROP TRIGGER IF EXISTS trg_OrderRows_Delete
+            DROP TRIGGER IF EXISTS trg_OrderRow_Delete
             ");
         }
     }

@@ -75,7 +75,11 @@ static async Task CustomerMenuAsync()
         switch (customerMenu)
         {
             case "1":
-                await CustomerServices.ListCustomerAsync();
+                Console.WriteLine("Please enter page: ");
+                var page = int.Parse(Console.ReadLine());
+                Console.WriteLine("Please enter page size: ");
+                var pageSize = int.Parse(Console.ReadLine());
+                await CustomerServices.ListCustomerAsync(page, pageSize);
                 break;
             case "2":
                 await CustomerServices.AddCustomerAsync();
@@ -132,14 +136,14 @@ static async Task ProductMenuAsync()
             case "1":
                 await ProductServices.ListProductAsync();
                 break;
-            //case "categoryproduct":
-            //if (parts.Length < 2 || !int.TryParse(parts[1], out var idCategory))
-            //{
-            // Console.WriteLine("Usage: CategoryProduct <id>");
-            // break;
-            //}
-            //await ListProductsByCategoryAsync(idCategory);
-            //break;
+            case "2":
+            if (parts.Length < 2 || !int.TryParse(parts[1], out var idCategory))
+            {
+             Console.WriteLine("Usage: (2) Category Product <id>");
+             break;
+            }
+            await ProductServices.ListProductsByCategoryAsync(idCategory);
+            break;
             case "3":
                 await ProductServices.AddProductAsync();
                 break;
@@ -193,9 +197,13 @@ static async Task ProductMenuAsync()
             switch (categoryMenu)
             {
                 case "1":
-                    await CategoryServices.ListCategoryAsync(); 
-                    break;
-                case "2":
+                Console.WriteLine("Please enter page: ");
+                var page = int.Parse(Console.ReadLine());
+                Console.WriteLine("Please enter page size: ");
+                var pageSize = int.Parse(Console.ReadLine());
+                await CategoryServices.ListCategoryAsync(page, pageSize);
+                break;
+            case "2":
                     await CategoryServices.AddCategoryAsync();
                     break;
                 case "3":

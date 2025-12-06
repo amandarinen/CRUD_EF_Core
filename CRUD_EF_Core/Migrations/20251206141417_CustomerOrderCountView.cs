@@ -5,7 +5,7 @@
 namespace CRUD_EF_Core.Migrations
 {
     /// <inheritdoc />
-    public partial class AddCustomerOrderCountView : Migration
+    public partial class CustomerOrderCountView : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

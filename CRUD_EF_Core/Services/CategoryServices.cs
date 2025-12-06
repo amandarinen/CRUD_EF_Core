@@ -11,16 +11,29 @@ namespace CRUD_EF_Core.Services
 {
     public class CategoryServices
     {
-        public static async Task ListCategoryAsync()
+        public static async Task ListCategoryAsync(int page, int pageSize)
         {
             using var db = new ShopContext();
-
-            //AsNoTracking = snabbare för read-only scenarion. (ingen change tracking)
-            var rows = await db.Categories.AsNoTracking().OrderBy(category => category.CategoryId).ToListAsync();
+            var cat = db.Categories
+                .AsNoTracking()
+                .OrderBy(category => category.CategoryId);
+            
             Console.WriteLine("ID | Name | Description");
-            foreach (var row in rows)
+
+            var categories = await cat
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var totalCount = await cat.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            Console.WriteLine($"Page = {page}/{totalPages}, pageSize = {pageSize}");
+
+            
+            foreach (var category in categories)
             {
-                Console.WriteLine($"{row.CategoryId} | {row.CategoryName} | {row.CategoryDescription}");
+                Console.WriteLine($"{category.CategoryId} | {category.CategoryName} | {category.CategoryDescription}");
             }
         }
 
@@ -87,7 +100,7 @@ namespace CRUD_EF_Core.Services
 
         public static async Task AddCategoryAsync()
         {
-            Console.WriteLine("Name: ");
+            Console.WriteLine("Name of new category: ");
             var name = Console.ReadLine()?.Trim() ?? string.Empty;
 
             //enkel validering

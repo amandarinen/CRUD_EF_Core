@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CRUD_EF_Core.Migrations
 {
     [DbContext(typeof(ShopContext))]
-    [Migration("20251206110516_AddCustomerOrderCountView")]
-    partial class AddCustomerOrderCountView
+    [Migration("20251206141457_ProductSalesView")]
+    partial class ProductSalesView
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -248,7 +248,8 @@ namespace CRUD_EF_Core.Migrations
                 {
                     b.HasOne("CRUD_EF_Core.Models.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Category");
                 });
