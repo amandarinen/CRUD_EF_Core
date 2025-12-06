@@ -28,8 +28,7 @@ namespace CRUD_EF_Core
             {
                 e.HasKey(customer => customer.CustomerId);
 
-                e.Property(customer => customer.Name)
-                .IsRequired().HasMaxLength(100);
+                e.Property(customer => customer.Name).IsRequired().HasMaxLength(100);
 
                 e.Property(customer => customer.Email).IsRequired().HasMaxLength(100);
 
@@ -80,14 +79,18 @@ namespace CRUD_EF_Core
                 e.Property(product => product.ProductName).IsRequired().HasMaxLength(100);
 
                 e.Property(product => product.ProductDescription).HasMaxLength(250);
+
+                e.HasOne(product => product.Category)
+                .WithMany(category => category.Products)
+                .HasForeignKey(product => product.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<Category>(e =>
             {
                 e.HasKey(category => category.CategoryId);
 
-                e.Property(category => category.CategoryName)
-                .IsRequired().HasMaxLength(100);
+                e.Property(category => category.CategoryName).IsRequired().HasMaxLength(100);
 
                 e.Property(category => category.CategoryDescription).HasMaxLength(250);
 
@@ -98,7 +101,7 @@ namespace CRUD_EF_Core
             {
                 e.HasNoKey(); // saknar PK
 
-                e.ToView("OrderSummary"); //kopplar tabellen mot SQLite, behöver inte ha matchande modellnamn bara samma som våran tabel
+                e.ToView("OrderSummary"); //kopplar tabellen mot SQLite, behöver inte ha matchande modellnamn bara samma som våran table
             });
 
             modelBuilder.Entity<CustomerOrderCountView>(e =>

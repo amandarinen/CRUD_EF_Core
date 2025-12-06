@@ -31,14 +31,26 @@ namespace CRUD_EF_Core.Data
                 Console.WriteLine("Seeded db with customers!");
             }
 
+            if (!await db.Categories.AnyAsync())
+            {
+                db.Categories.AddRange(
+                    new Category { CategoryName = "Electronics", CategoryDescription = "Devices and gadgets" },
+                    new Category { CategoryName = "Accessories", CategoryDescription = "Phone and computer accessories" },
+                    new Category { CategoryName = "Wearables", CategoryDescription = "Smart watches and fitness trackers" },
+                    new Category { CategoryName = "Gaming", CategoryDescription = "Gaming peripherals and consoles" }
+                );
+                await db.SaveChangesAsync();
+                Console.WriteLine("Seeded db with categories!");
+            }
+
             if (!await db.Products.AnyAsync())
             {
                 db.Products.AddRange(
-                    new Product { ProductName = "Headphones", ProductDescription = "Wireless headphones", ProductPrice = 799 },
-                    new Product { ProductName = "Keyboard", ProductDescription = "backlit mechanical keyboard", ProductPrice = 599 },
-                    new Product { ProductName = "Monitor", ProductDescription = "4K Display", ProductPrice = 349 },
-                    new Product { ProductName = "Smart Watch", ProductDescription = "Smart fitness watch", ProductPrice = 999 },
-                    new Product { ProductName = "Powerbank", ProductDescription = "Fast charging powerbank.", ProductPrice = 200 }
+                    new Product { ProductName = "Headphones", ProductDescription = "Wireless headphones", ProductPrice = 799 , CategoryId = 2},
+                    new Product { ProductName = "Keyboard", ProductDescription = "backlit mechanical keyboard", ProductPrice = 599 , CategoryId = 1 },
+                    new Product { ProductName = "Monitor", ProductDescription = "4K Display", ProductPrice = 349 , CategoryId = 2 },
+                    new Product { ProductName = "Smart Watch", ProductDescription = "Smart fitness watch", ProductPrice = 999 , CategoryId = 3 },
+                    new Product { ProductName = "Powerbank", ProductDescription = "Fast charging powerbank.", ProductPrice = 200 , CategoryId = 2 }
                     );
                 await db.SaveChangesAsync();
                 Console.WriteLine("Seeded db with products!");

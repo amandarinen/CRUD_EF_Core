@@ -19,9 +19,13 @@ namespace CRUD_EF_Core.Services
                 .Include(customer => customer.Customer)
                 .Include(orderrow => orderrow.OrderRows)
                 .OrderBy(order => order.OrderId);
+
             Console.WriteLine("Order Id | Order Date | Status | Customer Name | Total Amount ");
 
-            var rows = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            var rows = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
 
             var totalCount = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
@@ -30,9 +34,9 @@ namespace CRUD_EF_Core.Services
 
             foreach (var row in rows)
             {
-                //var totalAmount = row.OrderRows.Sum(or => or.UnitPrice * or.Quantity);
+                var totalAmount = row.OrderRows.Sum(or => or.UnitPrice * or.Quantity);
 
-                Console.WriteLine($"{row.OrderId} | {row.OrderDate} | {row.Status} | {row.Customer?.Name} | {row.TotalAmount}");
+                Console.WriteLine($"{row.OrderId} | {row.OrderDate} | {row.Status} | {row.Customer?.Name} | {totalAmount}");
             }
         }
 
@@ -64,8 +68,18 @@ namespace CRUD_EF_Core.Services
 
         public static async Task AddOrderAsync()
         {
-            await CustomerServices.ListCustomerAsync();
             using var db = new ShopContext();
+            var custs = await db.Customers
+                .AsNoTracking()
+                .OrderBy(c => c.CustomerId)
+                .ToListAsync();
+
+            Console.WriteLine("Customer Id | Customer Name | Email | City ");
+
+            foreach (var cust in custs)
+            {
+                Console.WriteLine($"{cust.CustomerId} | {cust.Name} | {cust.Email} | {cust.City}");
+            }
 
             Console.WriteLine("Enter Customer Id for this order: ");
             if (!int.TryParse(Console.ReadLine(), out var customerId))
@@ -135,7 +149,7 @@ namespace CRUD_EF_Core.Services
                 newOrder.OrderRows.Add(orderRow);
                 //newOrder.TotalAmount = newOrder.OrderRows.Sum(amount => amount.UnitPrice * amount.Quantity);
 
-                Console.WriteLine("\nDone with order? 'yes' or 'no'.");
+                Console.WriteLine("\nDone with order? \n > 'yes' or 'no'.");
                 var line = Console.ReadLine()?.Trim().ToLowerInvariant() ?? string.Empty;
 
                 if (string.IsNullOrEmpty(line))

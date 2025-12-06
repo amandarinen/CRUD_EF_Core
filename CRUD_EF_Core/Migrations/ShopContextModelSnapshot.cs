@@ -245,7 +245,8 @@ namespace CRUD_EF_Core.Migrations
                 {
                     b.HasOne("CRUD_EF_Core.Models.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Category");
                 });

@@ -14,9 +14,11 @@ namespace CRUD_EF_Core.Services
         public static async Task ListProductAsync()
         {
             using var db = new ShopContext();
+            var rows = await db.Products.AsNoTracking()
+                      .OrderBy(product => product.ProductId)
+                      .Include(c => c.Category)
+                      .ToListAsync();
 
-            var rows = await db.Products.AsNoTracking().OrderBy(product => product.ProductId)
-                                        .Include(c => c.Category).ToListAsync();
             Console.WriteLine("ID | Name | Description | Price | Category");
             foreach (var row in rows)
             {
@@ -95,7 +97,18 @@ namespace CRUD_EF_Core.Services
         public static async Task AddProductAsync()
         {
             Console.WriteLine("All Categories: ");
-            await CategoryServices.ListCategoryAsync();
+            using var db = new ShopContext();
+            var categories = await db.Categories
+                .AsNoTracking()
+                .OrderBy(category => category.CategoryId)
+                .ToListAsync();
+
+            Console.WriteLine("ID | Name | Description");
+
+            foreach (var category in categories)
+            {
+                Console.WriteLine($"{category.CategoryId} | {category.CategoryName} | {category.CategoryDescription}");
+            }
 
             Console.WriteLine("Choose Category Id");
             var CatId = Console.ReadLine();
@@ -127,7 +140,7 @@ namespace CRUD_EF_Core.Services
                 return;
             }
 
-            using var db = new ShopContext();
+            //using var db = new ShopContext();
             db.Products.Add(new Product { ProductName = name, ProductDescription = desc, ProductPrice = price, CategoryId = categoryId });
             try
             {
@@ -151,6 +164,22 @@ namespace CRUD_EF_Core.Services
             foreach(var product in products)
             {
                 Console.WriteLine($"ProductId: {product.ProductId} | Total Quantity Sold: {product.TotalQuantitySold}");
+            }
+        }
+
+        public static async Task ListProductsByCategoryAsync(int categoryId)
+        {
+            using var db = new ShopContext();
+            var products = await db.Products
+                .Where(p => p.CategoryId == categoryId)
+                .Include(p => p.Category)
+                .OrderBy(p => (int)p.ProductPrice)
+                .ToListAsync();
+
+            Console.WriteLine("Product ID | Name | Price | Description | Category");
+            foreach (var product in products)
+            {
+                Console.WriteLine($"{product.ProductId} | {product.ProductName} | {product.ProductDescription} | {product.ProductPrice} | {product.Category?.CategoryName}");
             }
         }
     }

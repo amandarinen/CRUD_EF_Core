@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CRUD_EF_Core.Migrations
 {
     [DbContext(typeof(ShopContext))]
-    [Migration("20251206105219_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251206141417_CustomerOrderCountView")]
+    partial class CustomerOrderCountView
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,27 +43,6 @@ namespace CRUD_EF_Core.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("CRUD_EF_Core.Models.CostumerOrderCountView", b =>
-                {
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("NumberOfOrders")
-                        .HasColumnType("INTEGER");
-
-                    b.ToTable((string)null);
-
-                    b.ToView("CostumerOrderCountView", (string)null);
-                });
-
             modelBuilder.Entity("CRUD_EF_Core.Models.Customer", b =>
                 {
                     b.Property<int>("CustomerId")
@@ -90,6 +69,27 @@ namespace CRUD_EF_Core.Migrations
                         .IsUnique();
 
                     b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("CRUD_EF_Core.Models.CustomerOrderCountView", b =>
+                {
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("NumberOfOrders")
+                        .HasColumnType("INTEGER");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("CustomerOrderCountView", (string)null);
                 });
 
             modelBuilder.Entity("CRUD_EF_Core.Models.Order", b =>
@@ -248,7 +248,8 @@ namespace CRUD_EF_Core.Migrations
                 {
                     b.HasOne("CRUD_EF_Core.Models.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Category");
                 });

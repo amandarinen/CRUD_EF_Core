@@ -1,30 +1,41 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using CRUD_EF_Core.Models;
 using Microsoft.EntityFrameworkCore;
-using CRUD_EF_Core.Models;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Runtime.InteropServices;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace CRUD_EF_Core.Services
 {
     public class CustomerServices
     {
-        public static async Task ListCustomerAsync()
+        public static async Task ListCustomerAsync(int page, int pageSize)
         {
             var db = new ShopContext();
-            var rows = await db.Customers
+            var query = db.Customers
                 .AsNoTracking()
-                .OrderBy(customer => customer.CustomerId)
-                .ToListAsync();
+                .OrderBy(customer => customer.CustomerId);
 
             Console.WriteLine("Customer Id | Customer Name | Email | City ");
-            foreach (var row in rows)
+
+            var customers = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            Console.WriteLine($"Page = {page}/{totalPages}, pageSize = {pageSize}");
+
+            foreach (var customer in customers)
             {
-                Console.WriteLine($"{row.CustomerId} | {row.Name} | {row.Email} | {row.City}");
+                Console.WriteLine($"{customer.CustomerId} | {customer.Name} | {customer.Email} | {customer.City}");
             }
         }
 
