@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CRUD_EF_Core.Migrations
 {
     [DbContext(typeof(ShopContext))]
-    [Migration("20251204083902_AddCustomerOrderCountView")]
-    partial class AddCustomerOrderCountView
+    [Migration("20251206105219_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,14 +45,14 @@ namespace CRUD_EF_Core.Migrations
 
             modelBuilder.Entity("CRUD_EF_Core.Models.CostumerOrderCountView", b =>
                 {
-                    b.Property<string>("CustomerEmail")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("CustomerId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("CustomerName")
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -195,6 +195,23 @@ namespace CRUD_EF_Core.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("CRUD_EF_Core.Models.ProductSalesView", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TotalQuantitySold")
+                        .HasColumnType("INTEGER");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("ProductSalesView", (string)null);
                 });
 
             modelBuilder.Entity("CRUD_EF_Core.Models.Order", b =>

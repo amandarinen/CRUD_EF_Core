@@ -12,6 +12,20 @@ namespace CRUD_EF_Core.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    CategoryId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CategoryName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    CategoryDescription = table.Column<string>(type: "TEXT", maxLength: 250, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.CategoryId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Customers",
                 columns: table => new
                 {
@@ -34,11 +48,17 @@ namespace CRUD_EF_Core.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     ProductPrice = table.Column<decimal>(type: "TEXT", nullable: false),
                     ProductName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    ProductDescription = table.Column<string>(type: "TEXT", maxLength: 250, nullable: true)
+                    ProductDescription = table.Column<string>(type: "TEXT", maxLength: 250, nullable: true),
+                    CategoryId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Products", x => x.ProductId);
+                    table.ForeignKey(
+                        name: "FK_Products_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "CategoryId");
                 });
 
             migrationBuilder.CreateTable(
@@ -49,7 +69,7 @@ namespace CRUD_EF_Core.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     CustomerId = table.Column<int>(type: "INTEGER", nullable: false),
                     OrderDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Status = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    Status = table.Column<int>(type: "INTEGER", maxLength: 50, nullable: false),
                     TotalAmount = table.Column<decimal>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -60,7 +80,7 @@ namespace CRUD_EF_Core.Migrations
                         column: x => x.CustomerId,
                         principalTable: "Customers",
                         principalColumn: "CustomerId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -82,7 +102,7 @@ namespace CRUD_EF_Core.Migrations
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "OrderId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_OrderRows_Products_ProductId",
                         column: x => x.ProductId,
@@ -90,6 +110,12 @@ namespace CRUD_EF_Core.Migrations
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_CategoryName",
+                table: "Categories",
+                column: "CategoryName",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Customers_Email",
@@ -111,6 +137,11 @@ namespace CRUD_EF_Core.Migrations
                 name: "IX_Orders_CustomerId",
                 table: "Orders",
                 column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_CategoryId",
+                table: "Products",
+                column: "CategoryId");
         }
 
         /// <inheritdoc />
@@ -127,6 +158,9 @@ namespace CRUD_EF_Core.Migrations
 
             migrationBuilder.DropTable(
                 name: "Customers");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
         }
     }
 }

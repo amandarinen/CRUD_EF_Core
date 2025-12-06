@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CRUD_EF_Core.Migrations
 {
     [DbContext(typeof(ShopContext))]
-    [Migration("20251201094450_ChangeOrderSummary")]
-    partial class ChangeOrderSummary
+    [Migration("20251206110516_AddCustomerOrderCountView")]
+    partial class AddCustomerOrderCountView
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -69,6 +69,27 @@ namespace CRUD_EF_Core.Migrations
                         .IsUnique();
 
                     b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("CRUD_EF_Core.Models.CustomerOrderCountView", b =>
+                {
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("NumberOfOrders")
+                        .HasColumnType("INTEGER");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("CustomerOrderCountView", (string)null);
                 });
 
             modelBuilder.Entity("CRUD_EF_Core.Models.Order", b =>
@@ -174,6 +195,23 @@ namespace CRUD_EF_Core.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("CRUD_EF_Core.Models.ProductSalesView", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TotalQuantitySold")
+                        .HasColumnType("INTEGER");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("ProductSalesView", (string)null);
                 });
 
             modelBuilder.Entity("CRUD_EF_Core.Models.Order", b =>

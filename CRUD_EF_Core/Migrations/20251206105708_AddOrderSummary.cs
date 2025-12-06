@@ -5,12 +5,11 @@
 namespace CRUD_EF_Core.Migrations
 {
     /// <inheritdoc />
-    public partial class ChangeOrderSummary : Migration
+    public partial class AddOrderSummary : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
             migrationBuilder.Sql(@"
             CREATE VIEW IF NOT EXISTS OrderSummary AS
             SELECT
@@ -24,18 +23,14 @@ namespace CRUD_EF_Core.Migrations
             LEFT JOIN OrderRows orw On orw.OrderId = o.OrderId
             GROUP BY o.OrderId, o.OrderDate, c.Name, c.Email;
             ");
-
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
             migrationBuilder.Sql(@"
             DROP VIEW IF EXISTS OrderSummary
             ");
-
-
         }
     }
 }

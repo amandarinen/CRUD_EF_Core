@@ -13,13 +13,13 @@ namespace CRUD_EF_Core
         public DbSet<Product> Products => Set<Product>();
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<OrderSummary> OrderSummaries => Set<OrderSummary>();
-        public DbSet<CostumerOrderCountView> CustomerOrderCountViews => Set<CostumerOrderCountView>();
+        public DbSet<CustomerOrderCountView> CustomerOrderCountViews => Set<CustomerOrderCountView>();
         public DbSet<ProductSalesView> ProductSalesViews => Set<ProductSalesView>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var dbPath = Path.Combine(AppContext.BaseDirectory, "shop.db");
-            optionsBuilder.UseSqlite($"Filename= {dbPath}");
+            optionsBuilder.UseSqlite($"Filename={dbPath}");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -101,11 +101,11 @@ namespace CRUD_EF_Core
                 e.ToView("OrderSummary"); //kopplar tabellen mot SQLite, behöver inte ha matchande modellnamn bara samma som våran tabel
             });
 
-            modelBuilder.Entity<CostumerOrderCountView>(e =>
+            modelBuilder.Entity<CustomerOrderCountView>(e =>
             {
                 e.HasNoKey();
 
-                e.ToView("CostumerOrderCountView");
+                e.ToView("CustomerOrderCountView");
             });
 
             modelBuilder.Entity<ProductSalesView>(e =>

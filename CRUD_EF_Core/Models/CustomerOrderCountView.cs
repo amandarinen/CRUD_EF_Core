@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace CRUD_EF_Core.Models
 {
     [Keyless]
-    public  class CostumerOrderCountView
+    public  class CustomerOrderCountView
     {
         public int CustomerId { get; set; }
         public string Name { get; set; } = string.Empty;

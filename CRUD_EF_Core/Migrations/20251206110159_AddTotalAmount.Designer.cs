@@ -11,14 +11,37 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CRUD_EF_Core.Migrations
 {
     [DbContext(typeof(ShopContext))]
-    [Migration("20251124151515_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251206110159_AddTotalAmount")]
+    partial class AddTotalAmount
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.11");
+
+            modelBuilder.Entity("CRUD_EF_Core.Models.Category", b =>
+                {
+                    b.Property<int>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CategoryDescription")
+                        .HasMaxLength(250)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("CategoryId");
+
+                    b.HasIndex("CategoryName")
+                        .IsUnique();
+
+                    b.ToTable("Categories");
+                });
 
             modelBuilder.Entity("CRUD_EF_Core.Models.Customer", b =>
                 {
@@ -48,6 +71,27 @@ namespace CRUD_EF_Core.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("CRUD_EF_Core.Models.CustomerOrderCountView", b =>
+                {
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("NumberOfOrders")
+                        .HasColumnType("INTEGER");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("CustomerOrderCountView", (string)null);
+                });
+
             modelBuilder.Entity("CRUD_EF_Core.Models.Order", b =>
                 {
                     b.Property<int>("OrderId")
@@ -60,10 +104,9 @@ namespace CRUD_EF_Core.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
+                    b.Property<int>("Status")
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("TEXT");
@@ -102,10 +145,37 @@ namespace CRUD_EF_Core.Migrations
                     b.ToTable("OrderRows");
                 });
 
+            modelBuilder.Entity("CRUD_EF_Core.Models.OrderSummary", b =>
+                {
+                    b.Property<string>("CustomerEmail")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("TEXT");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("OrderSummary", (string)null);
+                });
+
             modelBuilder.Entity("CRUD_EF_Core.Models.Product", b =>
                 {
                     b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ProductDescription")
@@ -122,7 +192,26 @@ namespace CRUD_EF_Core.Migrations
 
                     b.HasKey("ProductId");
 
+                    b.HasIndex("CategoryId");
+
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("CRUD_EF_Core.Models.ProductSalesView", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TotalQuantitySold")
+                        .HasColumnType("INTEGER");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("ProductSalesView", (string)null);
                 });
 
             modelBuilder.Entity("CRUD_EF_Core.Models.Order", b =>
@@ -130,7 +219,7 @@ namespace CRUD_EF_Core.Migrations
                     b.HasOne("CRUD_EF_Core.Models.Customer", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");
@@ -141,7 +230,7 @@ namespace CRUD_EF_Core.Migrations
                     b.HasOne("CRUD_EF_Core.Models.Order", "Order")
                         .WithMany("OrderRows")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CRUD_EF_Core.Models.Product", "Product")
@@ -153,6 +242,20 @@ namespace CRUD_EF_Core.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("CRUD_EF_Core.Models.Product", b =>
+                {
+                    b.HasOne("CRUD_EF_Core.Models.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId");
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("CRUD_EF_Core.Models.Category", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("CRUD_EF_Core.Models.Customer", b =>
