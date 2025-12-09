@@ -17,8 +17,6 @@ namespace CRUD_EF_Core.Services
             var cat = db.Categories
                 .AsNoTracking()
                 .OrderBy(category => category.CategoryId);
-            
-            Console.WriteLine("ID | Name | Description");
 
             var categories = await cat
                 .Skip((page - 1) * pageSize)
@@ -30,7 +28,8 @@ namespace CRUD_EF_Core.Services
 
             Console.WriteLine($"Page = {page}/{totalPages}, pageSize = {pageSize}");
 
-            
+            Console.WriteLine("Category ID | Name | Description");
+
             foreach (var category in categories)
             {
                 Console.WriteLine($"{category.CategoryId} | {category.CategoryName} | {category.CategoryDescription}");
@@ -43,6 +42,7 @@ namespace CRUD_EF_Core.Services
 
             //hämta raden vi vill uppdatera
             var category = await db.Categories.FirstOrDefaultAsync(category => category.CategoryId == id);
+
             if (category == null)
             {
                 Console.WriteLine("Category not found");
@@ -52,6 +52,7 @@ namespace CRUD_EF_Core.Services
             //visar nuvarande värden: uppdatera name för en specifik category
             Console.WriteLine($"{category.CategoryName} ");
             var name = Console.ReadLine()?.Trim() ?? string.Empty;
+
             if (!string.IsNullOrEmpty(name))
             {
                 category.CategoryName = name;
@@ -60,6 +61,7 @@ namespace CRUD_EF_Core.Services
             //uppdatera description för en specifik category
             Console.Write($"{category.CategoryDescription}");
             var description = Console.ReadLine()?.Trim() ?? string.Empty;
+
             if (!string.IsNullOrEmpty(description))
             {
                 category.CategoryDescription = description;
@@ -71,6 +73,7 @@ namespace CRUD_EF_Core.Services
                 await db.SaveChangesAsync();
                 Console.WriteLine("Edited!");
             }
+
             catch (DbUpdateException exception)
             {
                 Console.WriteLine(exception.Message);
@@ -81,17 +84,20 @@ namespace CRUD_EF_Core.Services
         {
             using var db = new ShopContext();
             var category = await db.Categories.FirstOrDefaultAsync(category => category.CategoryId == id);
+
             if (category == null)
             {
                 Console.WriteLine("Category not found!");
                 return;
             }
             db.Categories.Remove(category);
+
             try
             {
                 await db.SaveChangesAsync();
                 Console.WriteLine("Category deleted!");
             }
+
             catch (DbUpdateException exception)
             {
                 Console.WriteLine(exception.Message);
@@ -103,23 +109,29 @@ namespace CRUD_EF_Core.Services
             Console.WriteLine("Name of new category: ");
             var name = Console.ReadLine()?.Trim() ?? string.Empty;
 
-            //enkel validering
             if (string.IsNullOrEmpty(name) || name.Length > 100)
             {
                 Console.WriteLine("Name is required (max 100).");
                 return;
             }
+
             Console.WriteLine("Description (optional): ");
             var desc = Console.ReadLine()?.Trim() ?? string.Empty;
 
             using var db = new ShopContext();
-            db.Categories.Add(new Category { CategoryName = name, CategoryDescription = desc });
+            db.Categories.Add(new Category 
+            { 
+                CategoryName = name, 
+                CategoryDescription = desc 
+            });
+
             try
             {
                 //spara våra ändringar; trigga en INSERT + all validering/constrains
                 await db.SaveChangesAsync();
                 Console.WriteLine("Category added!");
             }
+
             catch (DbUpdateException exception)
             {
                 //hit kommer vi tex om Unique-indexet på CategoryName bryts

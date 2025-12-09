@@ -9,8 +9,21 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CRUD_EF_Core.Services
 {
+    /// <summary>
+    /// Service responsible for managing Orders
+    /// </summary>
     public class OrderServices
     {
+        /// <summary>
+        /// Retrieves and displays a paginated list of orders, including their details, to the console.
+        /// </summary>
+        /// <remarks>This method queries the database for orders, including associated customer and order
+        /// row details,  and displays the results in a formatted table. The output includes the order ID, order date,
+        /// status,  customer name, and total amount for each order. 
+        /// Pagination is applied based on the specified page and page size
+        /// <param name="page">The page number to retrieve. Must be greater than or equal to 1.</param>
+        /// <param name="pageSize">The number of orders to include per page. Must be greater than 0.</param>
+        /// <returns></returns>
         public static async Task ListOrderAsync(int page, int pageSize)
         {
             var db = new ShopContext();
@@ -19,8 +32,6 @@ namespace CRUD_EF_Core.Services
                 .Include(customer => customer.Customer)
                 .Include(orderrow => orderrow.OrderRows)
                 .OrderBy(order => order.OrderId);
-
-            Console.WriteLine("Order Id | Order Date | Status | Customer Name | Total Amount ");
 
             var rows = await query
                 .Skip((page - 1) * pageSize)
@@ -32,6 +43,8 @@ namespace CRUD_EF_Core.Services
 
             Console.WriteLine($"Page = {page}/{totalPages}, pageSize = {pageSize}");
 
+            Console.WriteLine("Order Id | Order Date | Status | Customer Name | Total Amount ");
+
             foreach (var row in rows)
             {
                 var totalAmount = row.OrderRows.Sum(or => or.UnitPrice * or.Quantity);
@@ -40,6 +53,16 @@ namespace CRUD_EF_Core.Services
             }
         }
 
+        /// <summary>
+        /// Retrieves and displays the details of a specific order, including its products, quantities, prices, and
+        /// total amount.
+        /// </summary>
+        /// <remarks>This method queries the database for the specified order and its associated order
+        /// rows, including product details. If the order is not found, a message indicating this is displayed. The
+        /// method outputs the order details to the console, including the product name, quantity, price per unit, and
+        /// the total amount for each order row, as well as the overall total amount.</remarks>
+        /// <param name="orderId">The unique identifier of the order to retrieve.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task OrderDetailsAsync(int orderId)
         {
             using var db = new ShopContext();
@@ -57,15 +80,24 @@ namespace CRUD_EF_Core.Services
             }
 
             Console.WriteLine("Product Name | Quantity | Price per unit | OrderRowAmount");
+
             foreach (var row in order.OrderRows)
             {
                 Console.WriteLine($"{row.Product?.ProductName} | {row.Quantity} | {row.UnitPrice} | {row.Quantity * row.UnitPrice}");
             }
+
             var totalAmount = order.OrderRows.Sum(or => or.UnitPrice * or.Quantity);
 
             Console.WriteLine($"Total Amount: {totalAmount}");
         }
 
+        /// <summary>
+        /// Creates a new order for a customer by interacting with the database and user input.
+        /// </summary>
+        /// <remarks>This method shows a list of customers so the user can create an order by selecting a customer ID and adding products with
+        /// specified quantities.  The order is then saved to the database. The method performs input validation and
+        /// ensures that the customer and products exist before proceeding.</remarks>
+        /// <returns></returns>
         public static async Task AddOrderAsync()
         {
             using var db = new ShopContext();
@@ -105,7 +137,6 @@ namespace CRUD_EF_Core.Services
 
             while (true)
             {
-
                 Console.WriteLine("Available products:");
                 var products = await db.Products
                     .AsNoTracking()
@@ -147,7 +178,6 @@ namespace CRUD_EF_Core.Services
                 };
 
                 newOrder.OrderRows.Add(orderRow);
-                //newOrder.TotalAmount = newOrder.OrderRows.Sum(amount => amount.UnitPrice * amount.Quantity);
 
                 Console.WriteLine("\nDone with order? \n > 'yes' or 'no'.");
                 var line = Console.ReadLine()?.Trim().ToLowerInvariant() ?? string.Empty;
@@ -174,6 +204,13 @@ namespace CRUD_EF_Core.Services
             Console.WriteLine("Order created.");
         }
 
+        /// <summary>
+        /// Retrieves and displays a sorted list of orders for a specified customer.
+        /// </summary>
+        /// <remarks>This method shows all orders associated with the specified customer, including related customer and order row details. 
+        /// </remarks>
+        /// <param name="customerId">The unique identifier of the customer whose orders are to be retrieved.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task SortOrderCustomerAsync(int customerId)
         {
             var db = new ShopContext();
@@ -184,15 +221,22 @@ namespace CRUD_EF_Core.Services
                 .Where(customer => customer.CustomerId == customerId)
                 .OrderBy(order => order.OrderId)
                 .ToListAsync();
+
             Console.WriteLine("Order Id | Order Date | Status | Customer Name | Total Amount ");
+
             foreach (var row in rows)
             {
-                //var totalAmount = row.OrderRows.Sum(or => or.UnitPrice * or.Quantity);
-
                 Console.WriteLine($"{row.OrderId} | {row.OrderDate} | {row.Status} | {row.Customer?.Name} | {row.TotalAmount}");
             }
         }
 
+        /// <summary>
+        /// Retrieves and displays a list of orders filtered by their status.
+        /// </summary>
+        /// <remarks>This method sorts orders with the specified status, including
+        /// related customer and order row data. </remarks>
+        /// <param name="status">The status of the orders to filter by. Only orders matching this status will be retrieved.</param>
+        /// <returns></returns>
         public static async Task SortOrderStatusAsync(Status status)
         {
             var db = new ShopContext();
@@ -203,15 +247,21 @@ namespace CRUD_EF_Core.Services
                 .Where(s => s.Status == status)
                 .OrderBy(order => order.OrderId)
                 .ToListAsync();
+
             Console.WriteLine("Order Id | Order Date | Status | Customer Name | Total Amount ");
+
             foreach (var order in orders)
             {
-                //var totalAmount = order.OrderRows.Sum(or => or.UnitPrice * or.Quantity);
-
                 Console.WriteLine($"{order.OrderId} | {order.OrderDate} | {order.Status} | {order.Customer?.Name} | {order.TotalAmount}");
             }
         }
 
+        /// <summary>
+        /// Retrieves and displays a list of order summaries, sorted by order date.
+        /// </summary>
+        /// <remarks>This method queries the database for order summaries, including details such as order
+        /// ID,  order date, total amount, customer name, and customer email.</remarks>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task ListOrderSummary()
         {
             using var db = new ShopContext();
@@ -219,6 +269,7 @@ namespace CRUD_EF_Core.Services
             var summaries = await db.OrderSummaries
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
+
             Console.WriteLine("Order Id | Order Date | Total Amount | Customer Name | Customer Email");
 
             foreach(var summary in summaries)

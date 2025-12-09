@@ -11,18 +11,28 @@ namespace CRUD_EF_Core.Services
 {
     public class ProductServices
     {
-        public static async Task ListProductAsync()
+        public static async Task ListProductAsync(int page, int pageSize)
         {
             using var db = new ShopContext();
-            var rows = await db.Products.AsNoTracking()
+            var prod = db.Products.AsNoTracking()
                       .OrderBy(product => product.ProductId)
-                      .Include(c => c.Category)
-                      .ToListAsync();
+                      .Include(c => c.Category);
 
-            Console.WriteLine("ID | Name | Description | Price | Category");
-            foreach (var row in rows)
+            var products = await prod
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var totalCount = await prod.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            Console.WriteLine($"Page = {page}/{totalPages}, pageSize = {pageSize}");
+
+            Console.WriteLine("Product ID | Name | Description | Price | Category");
+
+            foreach (var product in products)
             {
-                Console.WriteLine($"{row.ProductId} | {row.ProductName} | {row.ProductDescription} | {row.ProductPrice} | {row.Category?.CategoryName}");
+                Console.WriteLine($"{product.ProductId} | {product.ProductName} | {product.ProductDescription} | {product.ProductPrice} | {product.Category?.CategoryName}");
             }
         }
 
@@ -30,12 +40,15 @@ namespace CRUD_EF_Core.Services
         {
             using var db = new ShopContext();
             var product = await db.Products.FirstOrDefaultAsync(product => product.ProductId == id);
+
             if (product == null)
             {
                 Console.WriteLine("Product not found!");
                 return;
             }
+
             db.Products.Remove(product);
+
             try
             {
                 await db.SaveChangesAsync();
@@ -141,7 +154,14 @@ namespace CRUD_EF_Core.Services
             }
 
             //using var db = new ShopContext();
-            db.Products.Add(new Product { ProductName = name, ProductDescription = desc, ProductPrice = price, CategoryId = categoryId });
+            db.Products.Add(new Product 
+            { 
+                ProductName = name, 
+                ProductDescription = desc, 
+                ProductPrice = price, 
+                CategoryId = categoryId 
+            });
+
             try
             {
                 await db.SaveChangesAsync();
@@ -177,6 +197,7 @@ namespace CRUD_EF_Core.Services
                 .ToListAsync();
 
             Console.WriteLine("Product ID | Name | Price | Description | Category");
+
             foreach (var product in products)
             {
                 Console.WriteLine($"{product.ProductId} | {product.ProductName} | {product.ProductDescription} | {product.ProductPrice} | {product.Category?.CategoryName}");
