@@ -12,7 +12,7 @@ await DbSeeder.SeedAsync();
 
 while (true)
 {
-     Console.WriteLine("\nMain Menu: \n| 1.customers | \n| 2.products | \n| 3.categories | \n| 4.orders | \n| 5.sortorders | \n| exit");
+     Console.WriteLine("\nMain Menu: \n| 1.customers | \n| 2.products | \n| 3.categories | \n| 4.orders | \n| 5.filter orders | \n| exit");
      Console.WriteLine("> ");
      var line = Console.ReadLine()?.Trim() ?? string.Empty;
 
@@ -134,7 +134,11 @@ static async Task ProductMenuAsync()
         switch (productMenu)
         {
             case "1":
-                await ProductServices.ListProductAsync();
+                Console.WriteLine("Please enter page: ");
+                var page = int.Parse(Console.ReadLine());
+                Console.WriteLine("Please enter page size: ");
+                var pageSize = int.Parse(Console.ReadLine());
+                await ProductServices.ListProductAsync(page, pageSize);
                 break;
             case "2":
             if (parts.Length < 2 || !int.TryParse(parts[1], out var idCategory))
@@ -284,7 +288,7 @@ static async Task ProductMenuAsync()
     {
         while (true)
         {
-            Console.WriteLine("\nSort Order Menu: \n| 1. sort order by customer id <id> | \n| 2. sort order by status <Completed/Processing/Canceled> | \n| exit");
+            Console.WriteLine("\nFilter Order Menu: \n| 1. sort order by customer id <id> | \n| 2. sort order by status <Completed/Processing/Canceled> | \n| exit");
             Console.WriteLine("> ");
             var line = Console.ReadLine()?.Trim() ?? string.Empty;
 
