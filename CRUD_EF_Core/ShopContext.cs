@@ -4,9 +4,13 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace CRUD_EF_Core
 {
+    /// <summary>
+    /// Represents the Entity Framework Core database context for the shop application.
+    /// It defines the database sets, configures the SQLite connection, 
+    /// and specifies model mappings and relationships.
+    /// </summary>
     public class ShopContext : DbContext
     {
-        //Mappar datan mot tabellerna i databasen
         public DbSet<Customer> Customers => Set<Customer>();
         public DbSet<Order> Orders => Set<Order>();
         public DbSet<OrderRow> OrderRows => Set<OrderRow>();
@@ -16,12 +20,22 @@ namespace CRUD_EF_Core
         public DbSet<CustomerOrderCountView> CustomerOrderCountViews => Set<CustomerOrderCountView>();
         public DbSet<ProductSalesView> ProductSalesViews => Set<ProductSalesView>();
 
+        /// <summary>
+        /// Configures the database connection for the context.
+        /// The context uses a SQLite database in the base directory.
+        /// </summary>
+        /// <param name="optionsBuilder">The builder used to configure the DbContext options.</param>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var dbPath = Path.Combine(AppContext.BaseDirectory, "shop.db");
             optionsBuilder.UseSqlite($"Filename={dbPath}");
         }
 
+        /// <summary>
+        /// Defines entity configurations, relationships, constraints, indexes and mappings to views for the EF Core model.
+        /// This method is executed when the model is being created.
+        /// </summary>
+        /// <param name="modelBuilder">The builder used to configure entity models.</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Customer>(e =>
@@ -99,9 +113,9 @@ namespace CRUD_EF_Core
 
             modelBuilder.Entity<OrderSummary>(e =>
             {
-                e.HasNoKey(); // saknar PK
+                e.HasNoKey();
 
-                e.ToView("OrderSummary"); //kopplar tabellen mot SQLite, behöver inte ha matchande modellnamn bara samma som våran table
+                e.ToView("OrderSummary");
             });
 
             modelBuilder.Entity<CustomerOrderCountView>(e =>

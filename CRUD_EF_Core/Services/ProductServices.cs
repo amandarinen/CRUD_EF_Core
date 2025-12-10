@@ -9,14 +9,27 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CRUD_EF_Core.Services
 {
+    /// <summary>
+    /// Provides a collection of asynchronous methods for managing products.
+    /// </summary>
+    /// <remarks>This class includes methods for listing, adding, editing, deleting, and querying products, 
+    /// as well as retrieving product sales data. </remarks>
     public class ProductServices
     {
+        /// <summary>
+        /// Retrieves and displays a paginated list of products, including their details and associated categories.
+        /// </summary>
+        /// <remarks>This method shows a list of products and includes their associated categories. 
+        /// The results are displayed in the console in a tabular format, along with pagination details.</remarks>
+        /// <param name="page">The page number to retrieve. Must be greater than or equal to 1.</param>
+        /// <param name="pageSize">The number of products to include per page. Must be greater than 0.</param>
+        /// <returns></returns>
         public static async Task ListProductAsync(int page, int pageSize)
         {
             using var db = new ShopContext();
             var prod = db.Products.AsNoTracking()
-                      .OrderBy(product => product.ProductId)
-                      .Include(c => c.Category);
+                .OrderBy(product => product.ProductId)
+                .Include(c => c.Category);
 
             var products = await prod
                 .Skip((page - 1) * pageSize)
@@ -36,6 +49,13 @@ namespace CRUD_EF_Core.Services
             }
         }
 
+        /// <summary>
+        /// Deletes a product with the specified identifier.
+        /// </summary>
+        /// <remarks>If no product with the specified identifier exists, the method logs a message and no
+        /// action is taken and if deletion fails the exception message is logged.</remarks>
+        /// <param name="id">The unique identifier of the product to delete.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task DeleteProductAsync(int id)
         {
             using var db = new ShopContext();
@@ -60,19 +80,24 @@ namespace CRUD_EF_Core.Services
             }
         }
 
+        /// <summary>
+        /// Updates the details of an existing product in the database.
+        /// </summary>
+        /// <remarks>This method updates the products name, description and price. 
+        /// If the product is not found, a message is displayed without making changes.</remarks>
+        /// <param name="id">The unique identifier of the product to be updated.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task EditProductAsync(int id)
         {
             using var db = new ShopContext();
-
-            //hämta raden vi vill uppdatera
             var product = await db.Products.FirstOrDefaultAsync(product => product.ProductId == id);
+
             if (product == null)
             {
                 Console.WriteLine("Product not found");
                 return;
             }
 
-            //visar nuvarande värden: uppdatera name för en specifik product
             Console.WriteLine($"{product.ProductName} ");
             var name = Console.ReadLine()?.Trim() ?? string.Empty;
             if (!string.IsNullOrEmpty(name))
@@ -80,7 +105,6 @@ namespace CRUD_EF_Core.Services
                 product.ProductName = name;
             }
 
-            //uppdatera description för en specifik product
             Console.Write($"{product.ProductDescription}");
             var description = Console.ReadLine()?.Trim() ?? string.Empty;
             if (!string.IsNullOrEmpty(description))
@@ -88,7 +112,6 @@ namespace CRUD_EF_Core.Services
                 product.ProductDescription = description;
             }
 
-            //uppdatera priset på en product
             Console.WriteLine($"{product.ProductPrice}");
             var priceInput = Console.ReadLine()?.Trim() ?? string.Empty;
             if (decimal.TryParse(priceInput, out var price) && price >= 0)
@@ -107,6 +130,14 @@ namespace CRUD_EF_Core.Services
             }
         }
 
+        /// <summary>
+        /// Adds a new product.
+        /// </summary>
+        /// <remarks> The method retrives and displays all available catagories to help the user select a valid category ID.
+        /// This method adds a product including its name, description, price, and associated category. 
+        /// It validates to ensure the input is correct and saves the product to the database. 
+        /// The product name is required and must not exceed 100 characters. The price must be a positive decimal value.</remarks>
+        /// <returns></returns>
         public static async Task AddProductAsync()
         {
             Console.WriteLine("All Categories: ");
@@ -116,7 +147,7 @@ namespace CRUD_EF_Core.Services
                 .OrderBy(category => category.CategoryId)
                 .ToListAsync();
 
-            Console.WriteLine("ID | Name | Description");
+            Console.WriteLine("Category ID | Name | Description");
 
             foreach (var category in categories)
             {
@@ -153,7 +184,6 @@ namespace CRUD_EF_Core.Services
                 return;
             }
 
-            //using var db = new ShopContext();
             db.Products.Add(new Product 
             { 
                 ProductName = name, 
@@ -167,12 +197,19 @@ namespace CRUD_EF_Core.Services
                 await db.SaveChangesAsync();
                 Console.WriteLine("Product added!");
             }
+
             catch (DbUpdateException exception)
             {
                 Console.WriteLine("DB Error!" + exception.GetBaseException().Message);
             }
         }
 
+        /// <summary>
+        /// Asynchronously retrieves and displays product sales data, ordered by product ID in descending order.
+        /// </summary>
+        /// <remarks>This method shows the product sales information.
+        /// Each product's ID and total quantity sold are displayed. </remarks>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task ProductSalesAsync()
 
         {
@@ -187,6 +224,13 @@ namespace CRUD_EF_Core.Services
             }
         }
 
+        /// <summary>
+        /// Shows a list of products for the specified category.
+        /// </summary>
+        /// <remarks>This method queries the database for products that belong to the specified category, 
+        /// orders them by price, and includes their associated category information. </remarks>
+        /// <param name="categoryId">The identifier of the category whose products should be listed. Must be a valid category ID.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task ListProductsByCategoryAsync(int categoryId)
         {
             using var db = new ShopContext();
