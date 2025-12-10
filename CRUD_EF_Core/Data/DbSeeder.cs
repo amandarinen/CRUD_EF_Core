@@ -11,14 +11,16 @@ namespace CRUD_EF_Core.Data
 {
     public static class DbSeeder
     {
-
+        /// <summary>
+        /// Provides database seeding.
+        /// </summary>
+        /// <returns></returns>
         public static async Task SeedAsync()
-
         {
             using var db = new ShopContext();
-
             await db.Database.MigrateAsync();
 
+            // Seed customers if table is empty.
             if (!await db.Customers.AnyAsync())
             {
                 db.Customers.AddRange(
@@ -31,6 +33,7 @@ namespace CRUD_EF_Core.Data
                 Console.WriteLine("Seeded db with customers!");
             }
 
+            // Seed categories if table is empty.
             if (!await db.Categories.AnyAsync())
             {
                 db.Categories.AddRange(
@@ -43,6 +46,7 @@ namespace CRUD_EF_Core.Data
                 Console.WriteLine("Seeded db with categories!");
             }
 
+            // Seed products if table is empty.
             if (!await db.Products.AnyAsync())
             {
                 db.Products.AddRange(
@@ -56,6 +60,7 @@ namespace CRUD_EF_Core.Data
                 Console.WriteLine("Seeded db with products!");
             }
 
+            // Seed orders if table is empty.
             if (!await db.Orders.AnyAsync())
             {
                 db.Orders.AddRange(
@@ -68,6 +73,7 @@ namespace CRUD_EF_Core.Data
                 Console.WriteLine("Seeded db with orders!");
             }
 
+            // Seed order rows if table is empty.
             if (!await db.OrderRows.AnyAsync())
             {
                 db.OrderRows.AddRange(

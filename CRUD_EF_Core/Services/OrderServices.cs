@@ -10,7 +10,8 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace CRUD_EF_Core.Services
 {
     /// <summary>
-    /// Service responsible for managing Orders
+    /// Provides methods for managing order data, including listing,  adding, editing,
+    /// and deleting orders.
     /// </summary>
     public class OrderServices
     {
@@ -20,7 +21,7 @@ namespace CRUD_EF_Core.Services
         /// <remarks>This method queries the database for orders, including associated customer and order
         /// row details,  and displays the results in a formatted table. The output includes the order ID, order date,
         /// status,  customer name, and total amount for each order. 
-        /// Pagination is applied based on the specified page and page size
+        /// Pagination is applied based on the specified page and page size.</remarks>
         /// <param name="page">The page number to retrieve. Must be greater than or equal to 1.</param>
         /// <param name="pageSize">The number of orders to include per page. Must be greater than 0.</param>
         /// <returns></returns>
@@ -257,10 +258,11 @@ namespace CRUD_EF_Core.Services
         }
 
         /// <summary>
-        /// Retrieves and displays a list of order summaries, sorted by order date.
+        /// Retrieves and displays a list of order summaries.
         /// </summary>
-        /// <remarks>This method queries the database for order summaries, including details such as order
-        /// ID,  order date, total amount, customer name, and customer email.</remarks>
+        /// <remarks>This method queries the database for order summaries, including details such as order ID,  
+        /// order date, total amount, customer name, and customer email. The results are displayed  in the console
+        /// in a tabular format.</remarks>
         /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task ListOrderSummary()
         {

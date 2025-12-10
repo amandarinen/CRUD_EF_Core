@@ -9,8 +9,20 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CRUD_EF_Core.Services
 {
+    /// <summary>
+    /// Provides services for managing categories including listing, adding, editing, and deleting categories.
+    /// </summary>
     public class CategoryServices
     {
+       /// <summary>
+       /// Retrieves and displays a paginated list of categories from the database.
+       /// </summary>
+       /// <remarks>This method shows a list of all categories, orders them by their unique
+       /// identifier, and retrieves the specified page of results. The total number of pages is calculated based on the
+       /// total count of categories and the specified page size.</remarks>
+       /// <param name="page">The page number to retrieve. Must be greater than or equal to 1.</param>
+       /// <param name="pageSize">The number of categories to include per page. Must be greater than 0.</param>
+       /// <returns></returns>
         public static async Task ListCategoryAsync(int page, int pageSize)
         {
             using var db = new ShopContext();
@@ -36,11 +48,17 @@ namespace CRUD_EF_Core.Services
             }
         }
 
+        /// <summary>
+        /// Updates the name and description of a category in the database based on the specified category ID.
+        /// </summary>
+        /// <remarks> This method updates a category from the database based on the users input.
+        /// If no input is provided, the existing values remain unchanged. The changes are then saved to
+        /// the database.</remarks>
+        /// <param name="id">The unique identifier of the category to be updated.</param>
+        /// <returns></returns>
         public static async Task EditCategoryAsync(int id)
         {
             using var db = new ShopContext();
-
-            //hämta raden vi vill uppdatera
             var category = await db.Categories.FirstOrDefaultAsync(category => category.CategoryId == id);
 
             if (category == null)
@@ -49,7 +67,6 @@ namespace CRUD_EF_Core.Services
                 return;
             }
 
-            //visar nuvarande värden: uppdatera name för en specifik category
             Console.WriteLine($"{category.CategoryName} ");
             var name = Console.ReadLine()?.Trim() ?? string.Empty;
 
@@ -58,7 +75,6 @@ namespace CRUD_EF_Core.Services
                 category.CategoryName = name;
             }
 
-            //uppdatera description för en specifik category
             Console.Write($"{category.CategoryDescription}");
             var description = Console.ReadLine()?.Trim() ?? string.Empty;
 
@@ -67,7 +83,6 @@ namespace CRUD_EF_Core.Services
                 category.CategoryDescription = description;
             }
 
-            //Uppdatera DBn med våra ändringar
             try
             {
                 await db.SaveChangesAsync();
@@ -80,6 +95,14 @@ namespace CRUD_EF_Core.Services
             }
         }
 
+        /// <summary>
+        /// Deletes a category with the specified identifier from the database.
+        /// </summary>
+        /// <remarks> If the category with the specified identifier does not exist, the method logs a
+        /// message and exits without making any changes. If an error occurs while saving changes to the database, the
+        /// exception message is logged.</remarks>
+        /// <param name="id">The unique identifier of the category to delete.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task DeleteCategoryAsync(int id)
         {
             using var db = new ShopContext();
@@ -104,6 +127,14 @@ namespace CRUD_EF_Core.Services
             }
         }
 
+        /// <summary>
+        /// Adds a new category.
+        /// </summary>
+        /// <remarks>Adds a new category based on the users input of name and an optional description. 
+        /// The category name is required and must not exceed 100 characters. If the name is invalid,  the operation is
+        /// aborted. The method saves the new category to the database and handles potential database update
+        /// exceptions, such as duplicate category names.</remarks>
+        /// <returns></returns>
         public static async Task AddCategoryAsync()
         {
             Console.WriteLine("Name of new category: ");
@@ -127,14 +158,12 @@ namespace CRUD_EF_Core.Services
 
             try
             {
-                //spara våra ändringar; trigga en INSERT + all validering/constrains
                 await db.SaveChangesAsync();
                 Console.WriteLine("Category added!");
             }
 
             catch (DbUpdateException exception)
             {
-                //hit kommer vi tex om Unique-indexet på CategoryName bryts
                 Console.WriteLine("DB Error (maybe duplicates?)!" + exception.GetBaseException().Message);
             }
         }

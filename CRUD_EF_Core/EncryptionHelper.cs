@@ -6,10 +6,18 @@ using System.Threading.Tasks;
 
 namespace CRUD_EF_Core
 {
+    /// <summary>
+    /// Provides utility methods for encrypting and decrypting text using a simple XOR-based algorithm.
+    /// </summary>
+    /// <remarks>This class uses a fixed key to perform XOR encryption and decryption. The encrypted text is
+    /// encoded as a Base64 string.</remarks>
     public class EncryptionHelper
     {
         private const byte Key = 0x42;
 
+        /// <summary>
+        /// Encrypts plain text using XOR + Base64.
+        /// </summary>
         public static string Encrypt(string text)
         {
             if (string.IsNullOrEmpty(text))
@@ -17,7 +25,6 @@ namespace CRUD_EF_Core
                 return text;
             }
 
-            // Using System.Text
             var bytes = Encoding.UTF8.GetBytes(text);
 
             for (int i = 0; i < bytes.Length; i++)
@@ -28,6 +35,10 @@ namespace CRUD_EF_Core
             return Convert.ToBase64String(bytes);
         }
 
+        /// <summary>
+        /// Attempts to decrypt Base64-encoded XOR text.
+        /// If the string is not valid Base64, the original string is returned.
+        /// </summary>
         public static string Decrypt(string encryptedText)
         {
             if (string.IsNullOrEmpty(encryptedText))
