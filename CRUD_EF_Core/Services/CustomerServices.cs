@@ -167,7 +167,6 @@ namespace CRUD_EF_Core.Services
                 await db.SaveChangesAsync();
                 Console.WriteLine("Customer edited!");
             }
-
             catch (DbUpdateException exception)
             {
                 Console.WriteLine(exception.Message);
@@ -198,7 +197,6 @@ namespace CRUD_EF_Core.Services
                 await db.SaveChangesAsync();
                 Console.WriteLine("Customer deleted!");
             }
-
             catch (DbUpdateException exception)
             {
                 Console.WriteLine(exception.Message);
