@@ -10,7 +10,7 @@ Console.WriteLine("DB: " + Path.Combine(AppContext.BaseDirectory, "shop.db"));
 
 await DbSeeder.SeedAsync();
 
-//Main menu loop – application keeps running until user types "exit".
+//Main Menu: application keeps running until user types "exit".
 while (true)
 {
     Console.WriteLine("\nMain Menu: \n| 1.customers | \n| 2.products | \n| 3.categories | \n| 4.orders | \n| 5.filter orders | \n| exit");
@@ -78,9 +78,18 @@ static async Task CustomerMenuAsync()
         {
             case "1":
                 Console.WriteLine("Please enter page: ");
-                var page = int.Parse(Console.ReadLine());
+                if (!int.TryParse(Console.ReadLine(), out var page) || page < 1)
+                {
+                    Console.WriteLine("Invalid page number. Must be a positive number.");
+                    break;
+                }
+
                 Console.WriteLine("Please enter page size: ");
-                var pageSize = int.Parse(Console.ReadLine());
+                if (!int.TryParse(Console.ReadLine(), out var pageSize) || pageSize < 1)
+                {
+                    Console.WriteLine("Invalid page size. Must be a positive number.");
+                    break;
+                }
                 await CustomerServices.ListCustomerAsync(page, pageSize);
                 break;
             case "2":
@@ -138,10 +147,18 @@ static async Task ProductMenuAsync()
         {
             case "1":
                 Console.WriteLine("Please enter page: ");
-                var page = int.Parse(Console.ReadLine());
+                if (!int.TryParse(Console.ReadLine(), out var page) || page < 1)
+                {
+                    Console.WriteLine("Invalid page number. Must be a positive number.");
+                    break;
+                }
+
                 Console.WriteLine("Please enter page size: ");
-                var pageSize = int.Parse(Console.ReadLine());
-                await ProductServices.ListProductAsync(page, pageSize);
+                if (!int.TryParse(Console.ReadLine(), out var pageSize) || pageSize < 1)
+                {
+                    Console.WriteLine("Invalid page size. Must be a positive number.");
+                    break;
+                }
                 break;
             case "2":
                 if (parts.Length < 2 || !int.TryParse(parts[1], out var idCategory))
@@ -206,10 +223,18 @@ static async Task CategoryMenuAsync()
         {
             case "1":
                 Console.WriteLine("Please enter page: ");
-                var page = int.Parse(Console.ReadLine());
+                if (!int.TryParse(Console.ReadLine(), out var page) || page < 1)
+                {
+                    Console.WriteLine("Invalid page number. Must be a positive number.");
+                    break;
+                }
+
                 Console.WriteLine("Please enter page size: ");
-                var pageSize = int.Parse(Console.ReadLine());
-                await CategoryServices.ListCategoryAsync(page, pageSize);
+                if (!int.TryParse(Console.ReadLine(), out var pageSize) || pageSize < 1)
+                {
+                    Console.WriteLine("Invalid page size. Must be a positive number.");
+                    break;
+                }
                 break;
             case "2":
                 await CategoryServices.AddCategoryAsync();
@@ -242,7 +267,7 @@ static async Task OrderMenuAsync()
 {
     while (true)
     {
-        Console.WriteLine("\nOrder Menu: \n| 1.list orders | \n| 2.order details <id> | \n| 3.add order | \n| 4.order summary | \n| exit");
+        Console.WriteLine("\nOrder Menu: \n| 1.list orders | \n| 2.order details <id> | \n| 3.add order | \n| 4.order summary | \n| 4.order by product <id> | \n| exit");
         Console.WriteLine("> ");
         var line = Console.ReadLine()?.Trim() ?? string.Empty;
 
@@ -263,10 +288,18 @@ static async Task OrderMenuAsync()
         {
             case "1":
                 Console.WriteLine("Please enter page: ");
-                var page = int.Parse(Console.ReadLine());
+                if (!int.TryParse(Console.ReadLine(), out var page) || page < 1)
+                {
+                    Console.WriteLine("Invalid page number. Must be a positive number.");
+                    break;
+                }
+
                 Console.WriteLine("Please enter page size: ");
-                var pageSize = int.Parse(Console.ReadLine());
-                await OrderServices.ListOrderAsync(page, pageSize);
+                if (!int.TryParse(Console.ReadLine(), out var pageSize) || pageSize < 1)
+                {
+                    Console.WriteLine("Invalid page size. Must be a positive number.");
+                    break;
+                }
                 break;
             case "2":
                 if (parts.Length < 2 || !int.TryParse(parts[1], out var orderId))
@@ -281,6 +314,14 @@ static async Task OrderMenuAsync()
                 break;
             case "4":
                 await OrderServices.ListOrderSummary();
+                break;
+            case "5":
+                if (parts.Length < 2 || !int.TryParse(parts[1], out var productId))
+                {
+                    Console.WriteLine("Usage: 5 (Order by product) <id>");
+                    break;
+                }
+                await OrderServices.OrderByProductAsync(productId);
                 break;
             default:
                 Console.WriteLine("unknown command");

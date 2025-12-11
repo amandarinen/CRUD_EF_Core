@@ -22,7 +22,7 @@ namespace CRUD_EF_Core.Services
         /// Retrieves and displays a paginated list of customers.
         /// </summary>
         /// <remarks>This method queries the database for orders and displays the results in a formatted table.  
-        /// Pagination is applied based on the specified page and page size
+        /// Pagination is applied based on the specified page and page size.
         /// <param name="page">The page number to retrieve. Must be greater than or equal to 1.</param>
         /// <param name="pageSize">The number of orders to include per page. Must be greater than 0.</param>
         /// <returns></returns>
@@ -52,12 +52,9 @@ namespace CRUD_EF_Core.Services
         }
 
         /// <summary>
-        /// Adds a new customer to the database.
+        /// Adds a new customer to the database including a securely hashed personnummer.
         /// </summary>
-        /// <remarks>This method prompts the user to input the customer's name, email, and city via the
-        /// console. The name and email are required fields, each with a maximum length of 100 characters. The city is
-        /// optional but must not exceed 100 characters if provided. If any input validation fails, the method will
-        /// terminate without adding the customer.</remarks>
+        /// <remarks>This method prompts the user to input name, email, personnummer and city via the console.</remarks>
         /// <returns></returns>
         public static async Task AddCustomerAsync()
         {
@@ -88,12 +85,26 @@ namespace CRUD_EF_Core.Services
                 return;
             }
 
+            Console.WriteLine("Personnummer (YYYYMMDDXXXX): ");
+            var personnummer = Console.ReadLine()?.Trim() ?? string.Empty;
+
+            if (string.IsNullOrEmpty(personnummer) || personnummer.Length != 12)
+            {
+                Console.WriteLine("Personnummer (max 12 characters).");
+                return;
+            }
+
+            var salt = HashingHelper.GenerateSalt();
+            var hash = HashingHelper.HashWithSalt(personnummer, salt);
+
             using var db = new ShopContext();
             db.Customers.Add(new Customer 
             { 
                 Name = name, 
                 Email = email, 
-                City = city
+                City = city,
+                CustomerPersonnummerSalt = salt,
+                CustomerPersonnummerHash = hash
             });
 
             try

@@ -73,6 +73,25 @@ namespace CRUD_EF_Core.Data
                 Console.WriteLine("Seeded db with orders!");
             }
 
+            if (await db.Orders.CountAsync() < 50)
+            {
+                var extraOrder = new List<Order>();
+
+                for (int i = 1; i <= 100; i++)
+                {
+                    extraOrder.Add(new Order
+                    {
+                        CustomerId = 1,
+                        OrderDate = DateTime.Now.AddDays(-5),
+                        Status = Status.Processing
+                    });
+                }
+                db.Orders.AddRange(extraOrder);
+                await db.SaveChangesAsync();
+                Console.WriteLine("Seeded db with extra orders!");
+            }
+
+
             // Seed order rows if table is empty.
             if (!await db.OrderRows.AnyAsync())
             {

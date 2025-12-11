@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CRUD_EF_Core
 {
     /// <summary>
-    /// Provides utility methods for encrypting and decrypting text using a simple XOR-based algorithm.
+    /// Provides methods for encrypting and decrypting text using a simple XOR-based algorithm.
     /// </summary>
     /// <remarks>This class uses a fixed key to perform XOR encryption and decryption. The encrypted text is
     /// encoded as a Base64 string.</remarks>

@@ -137,6 +137,7 @@ namespace CRUD_EF_Core.Services
         /// <returns></returns>
         public static async Task AddCategoryAsync()
         {
+
             Console.WriteLine("Name of new category: ");
             var name = Console.ReadLine()?.Trim() ?? string.Empty;
 

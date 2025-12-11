@@ -10,15 +10,12 @@ namespace CRUD_EF_Core.Models
         // PK, the unique identifier for the product.
         public int ProductId { get; set; }
 
-        // The price of the product.
         [Required]
         public decimal ProductPrice { get; set; }
 
-        // Name of product
         [Required, MaxLength(100)]
         public string ProductName { get; set; } = string.Empty;
 
-        // Optional description of the product.
         [MaxLength(250)]
         public string? ProductDescription { get; set; }
 

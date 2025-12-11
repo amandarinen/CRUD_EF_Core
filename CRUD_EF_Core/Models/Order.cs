@@ -23,14 +23,11 @@ namespace CRUD_EF_Core.Models
         // FK, the customer associated with the order.
         public int CustomerId { get; set; }
 
-        // Date the order was created.
         public DateTime OrderDate { get; set; }
 
-        // Status of the order.
         [Required, MaxLength(100)]
         public Status Status { get; set; }
 
-        // Total amount for the order.
         [Required]
         public decimal TotalAmount { get; set; }
 
