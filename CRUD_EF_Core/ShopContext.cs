@@ -131,6 +131,14 @@ namespace CRUD_EF_Core
 
                 e.ToView("ProductSalesView");
             });
+
+            // Indexes on Order: improves sorting by date and lookups filtered by customer.
+            modelBuilder.Entity<Order>().HasIndex(o => o.OrderDate);
+            modelBuilder.Entity<Order>().HasIndex(o => o.CustomerId);
+
+            // Indexes on Product: speeds up queries involving products and category filtering.
+            modelBuilder.Entity<Product>().HasIndex(p => p.ProductId);
+            modelBuilder.Entity<Product>().HasIndex(p => p.CategoryId);
         }
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CRUD_EF_Core.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class initialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +33,9 @@ namespace CRUD_EF_Core.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    City = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true)
+                    City = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    CustomerPersonnummerHash = table.Column<string>(type: "TEXT", nullable: true),
+                    CustomerPersonnummerSalt = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -140,9 +142,107 @@ namespace CRUD_EF_Core.Migrations
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Orders_OrderDate",
+                table: "Orders",
+                column: "OrderDate");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",
                 table: "Products",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_ProductId",
+                table: "Products",
+                column: "ProductId");
+
+
+            migrationBuilder.Sql(@"
+            CREATE VIEW IF NOT EXISTS ProductSalesView AS
+            SELECT
+                p.ProductId,
+                p.ProductName,
+                IFNULL(SUM(orw.Quantity), 0) AS TotalQuantitySold
+            FROM Products p
+            LEFT JOIN OrderRows orw ON orw.ProductId = p.ProductId
+            GROUP BY p.ProductId, p.ProductName;
+            ");
+
+            migrationBuilder.Sql(@"
+            CREATE VIEW IF NOT EXISTS CustomerOrderCountView AS
+            SELECT
+                c.CustomerId,
+                c.Name,
+                c.Email,
+                IFNULL(Count(o.OrderId), 0) AS NumberOfOrders
+            FROM Customers c
+            LEFT JOIN Orders o ON c.CustomerId = o.CustomerId
+            GROUP BY c.CustomerId, c.Name, c.Email;
+            ");
+
+            //AFTER INSERT
+            migrationBuilder.Sql(@"
+            CREATE TRIGGER IF NOT EXISTS trg_OrderRow_Insert
+            AFTER INSERT ON OrderRows
+            BEGIN
+                UPDATE Orders
+                SET TotalAmount = (
+                                    SELECT IFNULL(SUM(Quantity * UnitPrice), 0) 
+                                    FROM OrderRows 
+                                    WHERE OrderId = NEW.OrderId
+                                )
+                                WHERE OrderId = NEW.OrderId;
+                END;
+
+            ");
+
+            //AFTER UPDATE
+            migrationBuilder.Sql(@"
+            CREATE TRIGGER IF NOT EXISTS trg_OrderRow_Update
+            AFTER UPDATE ON OrderRows
+            BEGIN
+                UPDATE Orders
+                SET TotalAmount = (
+                                    SELECT IFNULL(SUM(Quantity * UnitPrice), 0) 
+                                    FROM OrderRows 
+                                    WHERE OrderId = NEW.OrderId
+                                )
+                                WHERE OrderId = NEW.OrderId;
+                END;
+
+            ");
+
+            //AFTER DELETE
+            migrationBuilder.Sql(@"
+            CREATE TRIGGER IF NOT EXISTS trg_OrderRow_Delete
+            AFTER DELETE ON OrderRows
+            BEGIN
+                UPDATE Orders
+                SET TotalAmount = (
+                                    SELECT IFNULL(SUM(Quantity * UnitPrice), 0) 
+                                    FROM OrderRows 
+                                    WHERE OrderId = OLD.OrderId
+                                )
+                                WHERE OrderId = OLD.OrderId;
+                END;
+
+            ");
+
+            migrationBuilder.Sql(@"
+            CREATE VIEW IF NOT EXISTS OrderSummary AS
+            SELECT
+                o.OrderId,
+                o.OrderDate,
+                c.Name AS CustomerName,
+                c.Email AS CustomerEmail,
+                IFNULL(SUM(orw.Quantity * orw.UnitPrice), 0) AS TotalAmount
+            FROM Orders o
+            JOIN Customers c ON c.CustomerId = o.CustomerId
+            LEFT JOIN OrderRows orw On orw.OrderId = o.OrderId
+            GROUP BY o.OrderId, o.OrderDate, c.Name, c.Email;
+            ");
+
+
         }
 
         /// <inheritdoc />
@@ -162,6 +262,31 @@ namespace CRUD_EF_Core.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.Sql(@"
+            DROP VIEW IF EXISTS ProductSalesView");
+
+            migrationBuilder.Sql(@"
+            DROP VIEW IF EXISTS CustomerOrderCountView
+            ");
+
+            migrationBuilder.Sql(@"
+            DROP TRIGGER IF EXISTS trg_OrderRow_Insert
+            ");
+
+            migrationBuilder.Sql(@"
+            DROP TRIGGER IF EXISTS trg_OrderRow_Update
+            ");
+
+            migrationBuilder.Sql(@"
+            DROP TRIGGER IF EXISTS trg_OrderRow_Delete
+            ");
+            migrationBuilder.Sql(@"
+            DROP VIEW IF EXISTS OrderSummary
+            ");
+
+
+
         }
     }
 }

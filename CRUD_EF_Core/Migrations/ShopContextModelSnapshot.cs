@@ -50,6 +50,12 @@ namespace CRUD_EF_Core.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("CustomerPersonnummerHash")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CustomerPersonnummerSalt")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -111,6 +117,8 @@ namespace CRUD_EF_Core.Migrations
                     b.HasKey("OrderId");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("OrderDate");
 
                     b.ToTable("Orders");
                 });
@@ -190,6 +198,8 @@ namespace CRUD_EF_Core.Migrations
                     b.HasKey("ProductId");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("Products");
                 });

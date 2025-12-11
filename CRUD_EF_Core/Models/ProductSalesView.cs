@@ -14,13 +14,11 @@ namespace CRUD_EF_Core.Models
     [Keyless]
     public class ProductSalesView
     {
-        // The unique identifier for the product.
+        // PK, the unique identifier for the product.
         public int ProductId { get; set; }
 
-        // Name of product.
         public string ProductName { get; set; } = string.Empty;
 
-        // The total number of units sold.
         public int TotalQuantitySold { get; set; }
     }
 }

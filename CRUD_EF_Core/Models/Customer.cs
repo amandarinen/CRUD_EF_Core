@@ -10,7 +10,6 @@ namespace CRUD_EF_Core.Models
         // PK, the unique identifier for the customer.
         public int CustomerId { get; set; }
 
-        // Customers name.
         [Required, MaxLength(100)]
         public string Name { get; set; } = null!;
 
@@ -24,10 +23,12 @@ namespace CRUD_EF_Core.Models
             set => _email = string.IsNullOrEmpty(value) ? null : EncryptionHelper.Encrypt(value); 
         } 
         
-        // Customers city.
         public string? City { get; set; }
 
         // A collection of orders associated with this customer.
         public List<Order> Orders { get; set; } = new();
+
+        public string? CustomerPersonnummerHash { get; set; }
+        public string? CustomerPersonnummerSalt { get; set; }
     }
 }

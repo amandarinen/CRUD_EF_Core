@@ -16,11 +16,9 @@ namespace CRUD_EF_Core.Models
         // FK, the product associated with this row.
         public int ProductId { get; set; }
 
-        // Quantity of the product in the order row.
         [Required]
         public int Quantity { get; set; }
 
-        // Price per product unit at the time of purchase.
         [Required]
         public decimal UnitPrice { get; set; }
 

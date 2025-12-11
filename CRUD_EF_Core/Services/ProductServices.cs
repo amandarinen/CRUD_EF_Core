@@ -27,9 +27,15 @@ namespace CRUD_EF_Core.Services
         public static async Task ListProductAsync(int page, int pageSize)
         {
             using var db = new ShopContext();
+
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+
             var prod = db.Products.AsNoTracking()
                 .OrderBy(product => product.ProductId)
                 .Include(c => c.Category);
+
+            sw.Stop();
+            Console.WriteLine($"Total time for query {sw.ElapsedMilliseconds} ms");
 
             var products = await prod
                 .Skip((page - 1) * pageSize)

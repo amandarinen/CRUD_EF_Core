@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CRUD_EF_Core.Migrations
 {
     [DbContext(typeof(ShopContext))]
-    [Migration("20251206141220_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251211144316_initialCreate")]
+    partial class initialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,6 +51,12 @@ namespace CRUD_EF_Core.Migrations
 
                     b.Property<string>("City")
                         .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CustomerPersonnummerHash")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CustomerPersonnummerSalt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
@@ -114,6 +120,8 @@ namespace CRUD_EF_Core.Migrations
                     b.HasKey("OrderId");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("OrderDate");
 
                     b.ToTable("Orders");
                 });
@@ -193,6 +201,8 @@ namespace CRUD_EF_Core.Migrations
                     b.HasKey("ProductId");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("Products");
                 });

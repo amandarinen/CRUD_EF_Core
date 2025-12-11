@@ -17,10 +17,8 @@ namespace CRUD_EF_Core.Models
         // The unique identifier for the customer.
         public int CustomerId { get; set; }
 
-        // Name of customer.
         public string Name { get; set; } = string.Empty;
 
-        // Customers email.
         public string Email { get; set; } = string.Empty;
 
         // The total number of orders placed by the customer.

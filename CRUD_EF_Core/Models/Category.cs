@@ -15,11 +15,9 @@ namespace CRUD_EF_Core.Models
         //PK, the unique identifier for category
         public int CategoryId { get; set; }
 
-        // Name of the category.
         [Required, MaxLength(100)]
         public string CategoryName { get; set; } = null!;
 
-        // Optional description of the category.
         [MaxLength(250)]
         public string? CategoryDescription { get; set; }
 
